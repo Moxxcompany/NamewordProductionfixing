@@ -26,7 +26,7 @@ const PricingPlans = () => {
         if (search) {
             path += `?value=${search}`
         }
-        navigate(path, { replace: true });
+        navigate(path);
     }
     return (
         <div id="pricing" className="flex flex-col justify-center items-center rounded-2xl overflow-hidden lg:my-24 md:my-20 my-16 max-w-3xl mx-auto">

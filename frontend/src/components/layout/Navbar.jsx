@@ -84,10 +84,10 @@ const Navbar = ({ isLoader = false}) => {
 								</NavLink>
 							</li>
 							<li>
-								<NavLink to="/help-support" className="navlink">{t.nav.contact}</NavLink>
+								<NavLink to="/help-support#need-help" className="navlink">{t.nav.contact}</NavLink>
 							</li>
 							<li>
-								<NavLink to="/help-support" className="navlink">{t.nav.faq}</NavLink>
+								<NavLink to="/help-support#discover-domains" className="navlink">{t.nav.faq}</NavLink>
 							</li>
 						</ul>
 

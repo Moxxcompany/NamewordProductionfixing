@@ -80,7 +80,7 @@ const ChangePassword = ({ onClose }) => {
                             onSubmit={handleSubmit}
                             enableReinitialize
                         >
-                            {({ values, errors, touched, handleChange, handleBlur, isSubmitting }) => (
+                            {({ values, errors, touched, handleChange, handleBlur, isSubmitting, isValid, dirty }) => (
                                 <Form>
                                     {/* New Password */}
                                     <div className={`relative ${errors.oldPassword && touched.oldPassword ? "input-error" : ""}`}>
@@ -100,7 +100,7 @@ const ChangePassword = ({ onClose }) => {
                                             onClick={() => setOldPassword(!oldPassword)}
                                             className="absolute right-5 top-5 text-primary dark:text-gray-500 cursor-pointer"
                                         >
-                                            {oldPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                                            {oldPassword ? <FiEye size={18} /> : <FiEyeOff size={18} />}
                                         </button>
                                         <label
                                             htmlFor="oldPassword"
@@ -128,7 +128,7 @@ const ChangePassword = ({ onClose }) => {
                                             onClick={() => setNewPassword(!newPassword)}
                                             className="absolute right-5 top-5 text-primary dark:text-gray-500 cursor-pointer"
                                         >
-                                            {newPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                                            {newPassword ? <FiEye size={18} /> : <FiEyeOff size={18} />}
                                         </button>
                                         <label
                                             htmlFor="newPassword"
@@ -160,7 +160,7 @@ const ChangePassword = ({ onClose }) => {
                                             onClick={() => setCPassword(!cPassword)}
                                             className="absolute right-5 top-5 text-primary dark:text-gray-500 cursor-pointer"
                                         >
-                                            {cPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                                            {cPassword ? <FiEye size={18} /> : <FiEyeOff size={18} />}
                                         </button>
                                         <label
                                             htmlFor="newPasswordConfirmation"
@@ -171,7 +171,7 @@ const ChangePassword = ({ onClose }) => {
                                         <ErrorMessage name="newPasswordConfirmation" component="p" className="text-warning pl-5 text-xs font-medium mt-1" />
                                     </div>
                                     <div className="mt-5 flex justify-end gap-2 admin-btn">
-                                        <button className={`add-to-cart ${isSubmitting ? "disable" : ""}`} disabled={isSubmitting || values.newPassword === values.oldPassword}>
+                                        <button className={`add-to-cart ${!(isValid && dirty) || isSubmitting || values.newPassword === values.oldPassword ? "disable" : ""}`} disabled={!(isValid && dirty) || isSubmitting || values.newPassword === values.oldPassword}>
                                             {t.admin.confirm}
                                         </button>
                                     </div>

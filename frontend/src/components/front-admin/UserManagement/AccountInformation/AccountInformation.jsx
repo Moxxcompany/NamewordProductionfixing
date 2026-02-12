@@ -18,8 +18,18 @@ const AccountInformation = () => {
 
     // Validation schema with translations
     const accountDetailsSchema = useMemo(() => Yup.object().shape({
-        name: Yup.string().trim().required(t.admin.nameRequired),
-        username: Yup.string().trim().required(t.admin.usernameRequired),
+        name: Yup.string()
+            .trim()
+            .required(t.admin.nameRequired)
+            .min(2, t.admin.nameMinLength)
+            .max(50, t.admin.nameMaxLength)
+            .matches(/^[A-Za-z\s]+$/, t.admin.nameInvalidChars),
+        username: Yup.string()
+            .trim()
+            .required(t.admin.usernameRequired)
+            .min(2, t.admin.usernameMinLength)
+            .max(30, t.admin.usernameMaxLength)
+            .matches(/^[a-zA-Z0-9_-]+$/, t.admin.usernameInvalidChars),
         mobile: Yup.string()
             .trim()
             .required(t.admin.mobileFieldRequired)
@@ -74,7 +84,7 @@ const AccountInformation = () => {
                     validationSchema={accountDetailsSchema}
                     onSubmit={handleSubmit}
                 >
-                    {({ values, errors, touched, handleChange, handleBlur, setFieldValue, setFieldTouched, validateField, isValid, dirty }) => (
+                    {({ values, errors, touched, handleChange, handleBlur, setFieldValue, setFieldTouched, validateField, isValid, dirty, submitCount }) => (
                         <Form>
                             <div className="flex flex-col gap-3 w_full react-tel">
                                 <div className={`relative w-full ${errors.name && touched.name ? "input-error" : ""}`}>
@@ -82,12 +92,9 @@ const AccountInformation = () => {
                                         type="text" 
                                         name="name"
                                         id="name"
+                                        maxLength={50}
                                         className={`input-field peer w-full ${errors.name && touched.name ? 'border-red-500 dark:border-red-400' : 'admin-form '} disabled:cursor-not-allowed`} value={values.name}
-                                        onChange={(e) => {
-                                            // handleChange(e);
-                                            const filteredValue = e.target.value.replace(/[^A-Za-z\s]/g, '');
-                                             setFieldValue('name', filteredValue);
-                                        }}
+                                        onChange={(e) => handleChange(e)}
                                         onBlur={handleBlur}
                                     />
                                     <label
@@ -100,20 +107,20 @@ const AccountInformation = () => {
                                         {t.admin.name} *
                                     </label>
                                     <ErrorMessage name="name" component="p" className="text-warning pl-5 text-xs font-medium mt-1" />
+                                    {submitCount > 0 && errors.name && <p className="pl-5 text-xs text-secondary dark:text-gray-400 mt-1">{t.admin.nameFieldHelper}</p>}
                                 </div>
                                 <div className={`relative w-full ${errors.username && touched.username ? "input-error" : ""}`}>
                                     <Field
                                         type="text"
                                         name="username"
                                         id="username"
+                                        maxLength={30}
                                         className={`input-field peer w-full ${errors.username && touched.username ? 'border-red-500 dark:border-red-400' : 'admin-form '} disabled:cursor-not-allowed`} value={values.username}
-                                        onChange={(e) => {
-                                            handleChange(e);
-                                        }}
+                                        onChange={(e) => handleChange(e)}
                                         onBlur={handleBlur}
                                     />
                                     <label
-                                        htmlFor="name"
+                                        htmlFor="username"
                                         className={`absolute left-5 transition-all font-medium ${values.username
                                             ? 'top-2 text-xs text-gray-600'
                                             : 'top-4 text-13 text-primary dark:text-gray-500'
@@ -122,6 +129,7 @@ const AccountInformation = () => {
                                         {t.auth.username} 
                                     </label>
                                     <ErrorMessage name="username" component="p" className="text-warning pl-5 text-xs font-medium mt-1" />
+                                    {submitCount > 0 && errors.username && <p className="pl-5 text-xs text-secondary dark:text-gray-400 mt-1">{t.admin.usernameFieldHelper}</p>}
                                 </div>
                                         <div className={`relative w-full react-tel-flag ${errors.mobile && touched.mobile ? "input-error" : ""}`}>
                                     <PhoneInput

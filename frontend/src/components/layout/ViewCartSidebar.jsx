@@ -1,6 +1,7 @@
 import { IoClose, IoChevronDown } from "react-icons/io5";
 import { LuTrash2 } from "react-icons/lu";
 import { HiOutlineShoppingCart } from "react-icons/hi";
+import { FiCheck } from "react-icons/fi";
 import { useEffect, useState, useCallback } from "react";
 import { TbArrowRight } from "react-icons/tb";
 import { NavLink } from "react-router";
@@ -828,13 +829,23 @@ const ViewCartSidebar = ({ onClose, isModelOpen, setHasUnread, isGuestCart: isGu
                 const priceAmount = bundle.price?.amount ?? 0;
                 const termYears = parseInt(selected.split(" ")[0]) || 1;
 
-                // Check if this bundle is already in cart
-                const isInCart = cartData?.items?.some(
+                // Check if this bundle is already in cart (either as bundle item or all domains added separately)
+                const bundleAsCartItem = cartData?.items?.some(
                   item => item?.itemType === 'bundle' &&
                     item?.bundle?.items?.length === bundle.items?.length
                 );
+                const normalizeDomain = (name) => (name || "").toString().trim().toLowerCase();
+                const cartDomainNames = new Set(
+                  (cartData?.items || [])
+                    .filter((item) => item?.itemType === "domain")
+                    .map((item) => normalizeDomain(item?.domain?.name || item?.websiteName))
+                );
+                const allBundleDomainsInCart = (bundle.items || []).every(
+                  (bItem) => cartDomainNames.has(normalizeDomain(bItem?.name))
+                );
+                const isInCart = bundleAsCartItem || allBundleDomainsInCart;
 
-                if (isInCart) return null; // Don't show if already in cart
+                if (bundleAsCartItem) return null; // Don't show if already in cart as bundle item
 
                 return (
                   <div key={bundleId} className="cart-card mb-3 border-2 border-dashed border-gray-300 dark:border-gray-600">
@@ -932,11 +943,20 @@ const ViewCartSidebar = ({ onClose, isModelOpen, setHasUnread, isGuestCart: isGu
                     <div className="mt-4">
                       <button
                         onClick={() => handleAddBundleToCart(bundle)}
-                        className="add-to-cart w-full"
-                        disabled={cartLoading}
+                        className={`add-to-cart w-full ${allBundleDomainsInCart ? "opacity-70 cursor-not-allowed" : ""}`}
+                        disabled={cartLoading || allBundleDomainsInCart}
                       >
-                        {t.cart.sidebar.addBundleToCart}
-                        <TbArrowRight className="w-4 h-4" />
+                        {allBundleDomainsInCart ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <FiCheck className="w-4 h-4" />
+                            {t.cart.sidebar.bundleAdded || "Added"}
+                          </span>
+                        ) : (
+                          <>
+                            {t.cart.sidebar.addBundleToCart}
+                            <TbArrowRight className="w-4 h-4" />
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>

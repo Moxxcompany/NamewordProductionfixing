@@ -619,7 +619,15 @@ const WalletBallance = ({
                 }
                 placeholder={t.payment.amountPlaceholder || "0.00"}
               />
-              <button onClick={handleApply} className="btn-blue">
+              <button
+                onClick={handleApply}
+                disabled={
+                  Number(availableBalance || 0) < 0.01 ||
+                  (parseFloat(walletAmount) || 0) < 0.01 ||
+                  (parseFloat(walletAmount) || 0) > Number(availableBalance || 0)
+                }
+                className="btn-blue disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 {t.payment.apply || "Apply"}
               </button>
             </div>

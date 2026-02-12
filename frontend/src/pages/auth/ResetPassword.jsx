@@ -127,9 +127,9 @@ const ResetPassword = () => {
                     className="absolute right-5 top-5 text-primary dark:text-gray-500"
                   >
                     {showPassword ? (
-                      <FiEyeOff size={18} />
-                    ) : (
                       <FiEye size={18} />
+                    ) : (
+                      <FiEyeOff size={18} />
                     )}
                   </button>
                   <label
@@ -184,9 +184,9 @@ const ResetPassword = () => {
                     className="absolute right-5 top-5 text-primary dark:text-gray-500"
                   >
                     {showConfirmPassword ? (
-                      <FiEyeOff size={18} />
-                    ) : (
                       <FiEye size={18} />
+                    ) : (
+                      <FiEyeOff size={18} />
                     )}
                   </button>
                   <label

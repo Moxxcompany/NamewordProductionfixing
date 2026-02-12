@@ -58,6 +58,10 @@ export const authAPI = {
     const response = await apiClient.post(ENDPOINTS.AUTH.TELEGRAM_LOGIN, data);
     return response.data;
   },
+  linkTelegramAccount: async (data) => {
+    const response = await apiClient.post(ENDPOINTS.AUTH.TELEGRAM_LINK, data);
+    return response.data;
+  },
   accountDetailUpdate: async (userData) => {
     const response = await apiClient.post(ENDPOINTS.AUTH.ACCOUNT_DETAIL, userData);
     return response.data;

@@ -188,7 +188,14 @@ export const en = {
           name: "Michael Lee",
           role: "Product Manager at SwiftScale",
           image: "/images/user3.png"
-        }
+        },
+        {
+          title: "Efficient and trustworthy.",
+          content: "Setting up our online presence was a breeze. The platform offered transparent pricing, quick deployment, and responsive support. We now have a reliable foundation that scales with our growth.",
+          name: "Sarah Mitchell",
+          role: "Operations Lead at TechVentures",
+          image: "/images/user1.png"
+        },
       ]
     },
     claim: {
@@ -261,7 +268,10 @@ export const en = {
       noSuggestions: "No matching suggestions yet. Try adding another domain to your cart.",
       loadError: "Unable to load matching domain suggestions right now.",
       addSuccess: "Domain added to cart successfully",
-      addError: "Failed to add domain to cart. Please try again."
+      addError: "Failed to add domain to cart. Please try again.",
+      added: "Added",
+      goToCart: "Go to Cart",
+      adding: "Adding..."
     },
     sidebar: {
       cart: "Cart",
@@ -284,6 +294,7 @@ export const en = {
       brandProtectionDomainPackage: "Brand Protection Domain Package",
       domainPackage: "Domain Package",
       addBundleToCart: "Add Bundle to Cart",
+      bundleAdded: "Added",
       loadingSuggestedBundles: "Loading suggested bundles...",
       backToShopping: "Back to Shopping",
       continue: "Continue",
@@ -840,7 +851,15 @@ export const en = {
     phoneRequired: "Phone is required",
     enterValidPhoneNumber: "Enter a valid phone number",
     nameRequired: "Name is required",
+    nameMinLength: "Name must be at least 2 characters",
+    nameMaxLength: "Name must be at most 50 characters",
+    nameInvalidChars: "Name may only contain letters and spaces",
+    nameFieldHelper: "2-50 characters, letters and spaces only",
     usernameRequired: "Username is required",
+    usernameMinLength: "Username must be at least 2 characters",
+    usernameMaxLength: "Username must be at most 30 characters",
+    usernameInvalidChars: "Username may only contain letters, numbers, underscores, and hyphens",
+    usernameFieldHelper: "2-30 characters, letters, numbers, underscores, and hyphens only",
     mobileFieldRequired: "Mobile field is required.",
     countryCodeRequired: "Country code is required",
     countryRequired: "Country is required",
@@ -1054,6 +1073,9 @@ export const en = {
     unlinkGoogle: "Unlink Google",
     linkGoogle: "Link Google",
     linkTelegram: "Link Telegram",
+    telegramLinkedSuccess: "Telegram account linked successfully",
+    failedToLinkTelegram: "Failed to link Telegram account",
+    linking: "Linking...",
     failedToUnlinkGoogle: "Failed to unlink Google account",
     deleteAccountWarning: "Keep in mind that upon deleting your account all of your account information will be deleted without the possibility of restoration.",
     deleteAccount: "Delete account",

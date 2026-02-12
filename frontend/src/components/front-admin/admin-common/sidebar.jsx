@@ -823,8 +823,8 @@ export default function Sidebar({ setIsEnlarge }) {
                       target="_blank"
                       rel="noopener noreferrer"
                       className={"flex items-center justify-between"}
-                    >
-                      {t.admin.cPanel} <HiOutlineExternalLink />
+                    >                    
+                      {t.admin.cPanel} < HiOutlineExternalLink />
                     </a>
                   </li>
                 </ul>

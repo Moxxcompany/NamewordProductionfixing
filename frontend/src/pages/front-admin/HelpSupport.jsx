@@ -1,10 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { LuUser } from "react-icons/lu";
 import NeedHelp from "../../components/front-admin/help-support/NeedHelp";
 import QASection from "../../components/front-admin/help-support/QASection";
 import MainLayout from '../../layouts/MainLayout';
 import { useLanguage } from "../../hooks/useLanguage";
 import { IoIosArrowDown } from "react-icons/io";
+import { useLocation } from "react-router";
 
 // Helper function to format answer from translation object
 const formatAnswer = (answer) => {
@@ -63,6 +64,23 @@ const formatAnswer = (answer) => {
 const HelpSupport = () => {
   const [activeTab, setActiveTab] = useState("discover-domain");
   const { t } = useLanguage();
+  const location = useLocation();
+
+  useEffect(() => {
+    const hash = location.hash?.replace("#", "") || "";
+    if (hash === "discover-domains") {
+      setActiveTab("discover-domain");
+      setTimeout(() => {
+        const el = document.getElementById("discover-domains");
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    } else if (hash === "need-help") {
+      setTimeout(() => {
+        const el = document.getElementById("need-help");
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  }, [location.pathname, location.hash]);
 
   // Sidebar menu items
   const sidebarItems = [
@@ -172,12 +190,14 @@ const HelpSupport = () => {
           {/* Tab Content */}
           <div className="w-full sm:pl-9 space-y-7 sm:border-l sm:border-stokecolor dark:border-gray-700 overflow-hidden">
             <div className="space-y-7">
-              <QASection 
-                title={sidebarItems.find(item => item.id === activeTab)?.label || t.helpSupport.common.helpSupportTitle}
-                qaData={qaData}
-              />
+              <div id="discover-domains">
+                <QASection 
+                  title={sidebarItems.find(item => item.id === activeTab)?.label || t.helpSupport.common.helpSupportTitle}
+                  qaData={qaData}
+                />
+              </div>
 
-              <div className="space-y-5">
+              <div id="need-help" className="space-y-5">
                 <p className="card-admin-title">{t.helpSupport.common.needHelp}</p>
 
                 <div className="table-card">

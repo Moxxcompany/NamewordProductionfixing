@@ -232,7 +232,7 @@ const SignIn = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-5 top-5 text-primary dark:text-gray-500 cursor-pointer"
                 >
-                  {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                  {showPassword ? <FiEye size={18} /> : <FiEyeOff size={18} />}
                 </button>
                 <label
                   htmlFor="password"

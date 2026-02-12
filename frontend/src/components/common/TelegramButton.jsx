@@ -1,3 +1,7 @@
+/**
+ * Telegram Login Widget - custom button on top (pointer-events-none), widget hidden behind for clicks.
+ * If you see "Bot domain invalid": message @BotFather → /setdomain → enter your app domain (e.g. app.nameword.com).
+ */
 import { useEffect, useRef } from 'react';
 import { telegram } from './icons'
 import { useAuth } from '../../hooks/useAuth';
@@ -42,26 +46,46 @@ const TelegramButton = ({ loading, setLoading, telegramLoading }) => {
 
     window.onTelegramAuth = onTelegramAuth;
 
-    if (telegramWrapperRef.current) {
-      telegramWrapperRef.current.appendChild(scriptElement);
-    }
+    const container = telegramWrapperRef.current;
+    if (!container) return;
 
-    // Clean up script when component unmounts
-    return () => {
-      if (telegramWrapperRef.current) {
-        telegramWrapperRef.current.innerHTML = "";
+    container.appendChild(scriptElement);
+
+    // Force iframe to 100% width/height after Telegram widget injects it (cross-origin: we can't style content inside)
+    const forceIframeFullSize = () => {
+      const iframe = container.querySelector("iframe");
+      if (iframe) {
+        iframe.style.width = "100%";
+        iframe.style.height = "100%";
+        iframe.style.minHeight = "44px";
       }
+    };
+
+    const observer = new MutationObserver(forceIframeFullSize);
+    observer.observe(container, { childList: true, subtree: true });
+    forceIframeFullSize();
+
+    return () => {
+      observer.disconnect();
+      container.innerHTML = "";
     };
   }, []);
 
   return (
-    <>
-      <button className={`btn-outline max-w-full ${loading || telegramLoading ? "disable" : ""}`} disabled={loading || telegramLoading} >
+    <div className="relative w-full">
+      <div ref={telegramWrapperRef} className="absolute inset-0 [&>iframe]:!w-full [&>iframe]:!h-full [&>iframe]:!min-h-[44px]" aria-hidden />
+      <button
+        className={`btn-outline w-full max-w-full pointer-events-none z-10 relative ${loading || telegramLoading ? "disable" : ""}`}
+        disabled={loading || telegramLoading}
+        aria-hidden
+      >
         <img src={telegram} alt="Telegram" className="w-5 h-5" />
         {t.common.telegram.continueWith}
       </button>
-      <div className='opacity-0' ref={telegramWrapperRef}></div>
-    </>
+      {(loading || telegramLoading) && (
+        <div className="absolute inset-0 z-20 cursor-not-allowed" aria-hidden />
+      )}
+    </div>
   )
 }
 

@@ -18,7 +18,7 @@ const nunjucks = require("nunjucks");
 const getWalletTopupRewardRate = () => {
 	const rate = parseFloat(process.env.WALLET_TOPUP_REWARD_RATE);
 	return Number.isFinite(rate) && rate >= 0 ? rate : 0.02;
-}; 
+};
 
 const addWalletTopupRewardPoints = async (userId, amountUsd) => {
 	try {

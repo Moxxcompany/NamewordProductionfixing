@@ -17,11 +17,11 @@ export default function HeroSection() {
         if (search) {
             path += `?value=${search}`
         }
-        navigate(path, { replace: true });
+        navigate(path);
     }
     
     const handleRedirectHosting = () => {
-        navigate("/hosting", { replace: true });
+        navigate("/hosting");
     }
   return (
     <section className="claim-bg lg:mt-24 md:mt-20 mt-16">

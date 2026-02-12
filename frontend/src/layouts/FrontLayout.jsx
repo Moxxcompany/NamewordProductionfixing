@@ -151,8 +151,8 @@ const FrontLayout = () => {
 				<div className="space-y-5 text-13 font-medium xl:hidden flex flex-col gap-5 px-4">
 					<p className="text-lightgray-500 mb-0">{new Date().getFullYear()} {t.footer.allRightsReserved}</p>
 					<div className="flex gap-4 dark:text-gray-400 hover:dark:text-gray-400">
-						<NavLink to={"/help-support"}>{t.footer.termsAndConditions}</NavLink>
-						<NavLink to={"/help-support"}>{t.footer.privacyPolicy}</NavLink>
+						<NavLink to="/terms-and-conditions">{t.footer.termsAndConditions}</NavLink>
+						<NavLink to="/privacy-policy">{t.footer.privacyPolicy}</NavLink>
 					</div>
 				</div>
 			</div>

@@ -188,6 +188,13 @@ export const fr = {
           name: "Michael Lee",
           role: "Product Manager chez SwiftScale",
           image: "/images/user3.png"
+        },
+        {
+          title: "Efficace et fiable.",
+          content: "Mettre en place notre présence en ligne a été un jeu d'enfant. La plateforme offrait des tarifs transparents, un déploiement rapide et un support réactif. Nous avons maintenant une base fiable qui évolue avec notre croissance.",
+          name: "Sarah Mitchell",
+          role: "Responsable des opérations chez TechVentures",
+          image: "/images/user1.png"
         }
       ]
     },
@@ -261,7 +268,10 @@ export const fr = {
       noSuggestions: "Aucune suggestion pour le moment. Essayez d'ajouter un autre domaine à votre panier.",
       loadError: "Impossible de charger les suggestions de domaines correspondants pour le moment.",
       addSuccess: "Domaine ajouté au panier avec succès",
-      addError: "Échec de l'ajout du domaine au panier. Veuillez réessayer."
+      addError: "Échec de l'ajout du domaine au panier. Veuillez réessayer.",
+      added: "Ajouté",
+      goToCart: "Aller au panier",
+      adding: "Ajout en cours..."
     },
     sidebar: {
       cart: "Panier",
@@ -284,6 +294,7 @@ export const fr = {
       brandProtectionDomainPackage: "Paquet de Domaines de Protection de Marque",
       domainPackage: "Paquet de Domaines",
       addBundleToCart: "Ajouter le Paquet au Panier",
+      bundleAdded: "Ajouté",
       loadingSuggestedBundles: "Chargement des paquets suggérés...",
       backToShopping: "Retour aux Achats",
       continue: "Continuer",
@@ -840,7 +851,15 @@ export const fr = {
     phoneRequired: "Le téléphone est requis",
     enterValidPhoneNumber: "Entrez un numéro de téléphone valide",
     nameRequired: "Le nom est requis",
+    nameMinLength: "Le nom doit contenir au moins 2 caractères",
+    nameMaxLength: "Le nom doit contenir au plus 50 caractères",
+    nameInvalidChars: "Le nom ne peut contenir que des lettres et des espaces",
+    nameFieldHelper: "2-50 caractères, lettres et espaces uniquement",
     usernameRequired: "Le nom d'utilisateur est requis",
+    usernameMinLength: "Le nom d'utilisateur doit contenir au moins 2 caractères",
+    usernameMaxLength: "Le nom d'utilisateur doit contenir au plus 30 caractères",
+    usernameInvalidChars: "Le nom d'utilisateur ne peut contenir que des lettres, chiffres, tirets bas et tirets",
+    usernameFieldHelper: "2-30 caractères, lettres, chiffres, tirets bas et tirets",
     mobileFieldRequired: "Le champ mobile est requis.",
     countryCodeRequired: "Le code pays est requis",
     countryRequired: "Le pays est requis",
@@ -1054,6 +1073,9 @@ export const fr = {
     unlinkGoogle: "Dissocier Google",
     linkGoogle: "Lier Google",
     linkTelegram: "Lier Telegram",
+    telegramLinkedSuccess: "Compte Telegram lié avec succès",
+    failedToLinkTelegram: "Échec de la liaison du compte Telegram",
+    linking: "Liaison en cours...",
     failedToUnlinkGoogle: "Échec de la dissociation du compte Google",
     deleteAccountWarning: "N'oubliez pas qu'en supprimant votre compte, toutes les informations de votre compte seront supprimées sans possibilité de restauration.",
     deleteAccount: "Supprimer le compte",

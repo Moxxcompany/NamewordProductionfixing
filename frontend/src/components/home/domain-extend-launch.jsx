@@ -10,7 +10,7 @@ export default function StartWithDomain() {
     const { t } = useLanguage();
 
     const handleRedirectHosting = () => {
-        navigate("/hosting", { replace: true });
+        navigate("/hosting");
     }
   return (
     <section className="lg:my-24 md:my-20 my-16 xl:w-10/12 w-full mx-auto" id="services">

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router";
 import Loader from "../../../common/Loader";
 import { useAlert } from "../../../../context/AlertContext";
 import { useLanguage } from "../../../../hooks/useLanguage";
+import LinkTelegramButton from "../../../common/LinkTelegramButton";
 
 
 const SocialLogins = () => {
@@ -71,10 +72,20 @@ const SocialLogins = () => {
                 <div className="font-medium text-13 text-secondary min-w-1/6 flex items-center gap-2">
                     <img src={telegram} alt="Telegram" title="Telegram" /> {t.admin.telegram}
                 </div>
-                <div className="flex items-center gap-5 flex_wrap">
-                    <p className='text-13 text-warning font-medium flex items-center gap-2 min-w-1/12'>
-                        <IoClose size={14} /> {t.admin.disabled}</p>
-                    <button className="btn-outline small">{t.admin.linkTelegram}</button>
+                <div className="flex items-center gap-5 flex-wrap">
+                    {user?.telegramId ? (
+                        <>
+                            <p className='text-13 text-sucess-400 font-medium flex items-center gap-2 min-w-1/12'>
+                                <IoCheckmarkOutline size={14} /> {t.admin.enabled}
+                            </p>
+                        </>
+                    ) : (
+                        <>
+                            <p className='text-13 text-warning font-medium flex items-center gap-2 min-w-1/12'>
+                                <IoClose size={14} /> {t.admin.disabled}</p>
+                            <LinkTelegramButton loading={loading} setLoading={setLoading} />
+                        </>
+                    )}
                 </div>
             </div>
             {loading && <Loader />}

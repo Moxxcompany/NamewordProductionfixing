@@ -5,6 +5,7 @@ import { cartAPI } from "../../api/cartApi";
 import { useAlert } from "../../context/AlertContext";
 import { useLanguage } from "../../hooks/useLanguage";
 import { guestCart } from "../../utils/guestCart";
+import { FiCheck } from "react-icons/fi";
 
 const normalizeDomain = (domain) =>
   (domain || "").toString().trim().toLowerCase();
@@ -20,6 +21,7 @@ const MatchingDomainList = ({ domains = [], isGuestCart = false }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [adding, setAdding] = useState({});
+  const [addedToCart, setAddedToCart] = useState(new Set());
   const { showAlert } = useAlert();
   const { t } = useLanguage();
 
@@ -32,6 +34,21 @@ const MatchingDomainList = ({ domains = [], isGuestCart = false }) => {
     });
     return set;
   }, [domains]);
+
+  // Sync addedToCart: remove domains that are no longer in cart (e.g. user deleted them)
+  useEffect(() => {
+    setAddedToCart((prev) => {
+      const next = new Set(prev);
+      let changed = false;
+      prev.forEach((domain) => {
+        if (!existingDomains.has(domain)) {
+          next.delete(domain);
+          changed = true;
+        }
+      });
+      return changed ? next : prev;
+    });
+  }, [existingDomains]);
 
   const baseLabels = useMemo(() => {
     const labels = [];
@@ -150,6 +167,7 @@ const MatchingDomainList = ({ domains = [], isGuestCart = false }) => {
     try {
       if (isGuestCart) {
         guestCart.add(apiData);
+        setAddedToCart((prev) => new Set(prev).add(normalizeDomain(suggestion.websiteName)));
         showAlert(t.cart.matchingDomains.addSuccess, {
           duration: 2500,
           type: "success",
@@ -161,6 +179,7 @@ const MatchingDomainList = ({ domains = [], isGuestCart = false }) => {
       } else {
         const result = await cartAPI.addToCart(apiData);
         if (result?.success === true) {
+          setAddedToCart((prev) => new Set(prev).add(normalizeDomain(suggestion.websiteName)));
           showAlert(result?.message || t.cart.matchingDomains.addSuccess, {
             duration: 2500,
             type: "success",
@@ -220,6 +239,9 @@ const MatchingDomainList = ({ domains = [], isGuestCart = false }) => {
               suggestion.renewalFee > suggestion.registrationFee
                 ? suggestion.renewalFee
                 : null;
+            const normalized = normalizeDomain(suggestion.websiteName);
+            const isInCart = existingDomains.has(normalized) || addedToCart.has(normalized);
+            const isAdding = adding[suggestion.websiteName];
 
             return (
               <div
@@ -245,14 +267,22 @@ const MatchingDomainList = ({ domains = [], isGuestCart = false }) => {
                   <button
                     type="button"
                     className={`rounded bg-darkbtn hover:bg-darkbtn-hover p-1.5 flex-none flex-shrink-0 cursor-pointer ${
-                      adding[suggestion.websiteName]
+                      isInCart || isAdding
                         ? "opacity-60 cursor-not-allowed"
                         : ""
                     }`}
                     onClick={() => handleAddToCart(suggestion)}
-                    disabled={adding[suggestion.websiteName]}
+                    disabled={isInCart || isAdding}
                   >
-                    <img src={cart} alt="add-to-cart" title="" />
+                    {isAdding ? (
+                      <span className="text-xs">{t.cart.matchingDomains.adding}</span>
+                    ) : isInCart ? (
+                      <span className="text-xs flex items-center gap-1 text-white">
+                        <FiCheck className="w-3.5 h-3.5" />
+                      </span>
+                    ) : (
+                      <img src={cart} alt="add-to-cart" title="" />
+                    )}
                   </button>
                 </div>
               </div>

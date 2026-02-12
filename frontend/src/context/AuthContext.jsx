@@ -28,6 +28,7 @@ const defaultAuthValue = {
   checkAuth: async () => {},
   setError: () => {},
   onTelegramLogin: async () => ({ error: "AuthProvider not initialized" }),
+  linkTelegramAccount: async () => ({ error: "AuthProvider not initialized" }),
   accountDetailUpdate: async () => ({ error: "AuthProvider not initialized" }),
   changePassword: async () => ({ error: "AuthProvider not initialized" }),
   deleteAccount: async () => ({ error: "AuthProvider not initialized" }),
@@ -385,6 +386,32 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const linkTelegramAccount = async (data) => {
+    try {
+      setError(null);
+      const response = await authAPI.linkTelegramAccount(data);
+      if (response?.data) {
+        localStorage.setItem("user", JSON.stringify(response.data));
+        setUser((prev) => ({
+          ...(prev || {}),
+          ...response.data,
+        }));
+      }
+      return response;
+    } catch (error) {
+      if (error?.response?.data?.errors) {
+        setError(error?.response?.data?.errors[0]?.message);
+      } else {
+        const errorMessage =
+          error?.response?.data?.error ||
+          error?.response?.data?.message ||
+          "Telegram linking failed";
+        setError(errorMessage);
+      }
+      throw error;
+    }
+  };
+
   const accountDetailUpdate = async (userData) => {
     try {
       const response = await authAPI.accountDetailUpdate(userData);
@@ -481,6 +508,7 @@ export const AuthProvider = ({ children }) => {
     checkAuth,
     setError,
     onTelegramLogin,
+    linkTelegramAccount,
     accountDetailUpdate,
     changePassword,
     deleteAccount,

@@ -265,6 +265,43 @@ class SocialAuthController {
 
     }
 
+    async linkTelegramAccount(req, res, next) {
+        try {
+            const currentUserId = req.user?.id;
+            if (!currentUserId) {
+                return res.status(401).json({ error: 'User must be logged in to link Telegram account.', success: false });
+            }
+
+            const validator = new AuthDataValidator({ botToken: process.env.TELEGRAM_BOT_TOKEN });
+            const data = objectToAuthDataMap(req.body);
+            const userData = await validator.validate(data);
+            const telegramId = userData.id;
+
+            const existingWithTelegramId = await User.findOne({ telegramId });
+            if (existingWithTelegramId && existingWithTelegramId._id.toString() !== currentUserId) {
+                return res.status(400).json({ error: 'This Telegram account is already linked to another user.', success: false });
+            }
+
+            const user = await User.findById(currentUserId);
+            if (!user) {
+                return res.status(404).json({ error: 'User not found. Please log in again.', success: false });
+            }
+
+            user.telegramId = telegramId;
+            user.isProfileVerified = true;
+            await user.save();
+
+            const userDataWithProfile = await user.getProfileWithSignedURL();
+            return res.status(200).json({ data: userDataWithProfile, message: 'Telegram account linked successfully', success: true });
+        } catch (err) {
+            const errorMessage =
+                err?.response?.data?.error_description ||
+                err?.message ||
+                'Telegram linking failed';
+            return res.status(400).json({ error: errorMessage, success: false });
+        }
+    }
+
 }
 
 module.exports = new SocialAuthController();

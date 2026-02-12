@@ -7,7 +7,7 @@ export default function SecurityBeyond() {
     const { t } = useLanguage();
 
     const handleRedirectHosting = () => {
-        navigate("/hosting", { replace: true });
+        navigate("/hosting");
     }
     return (
         <section className="search-section w-full !py-20 !min-h-auto">
@@ -38,7 +38,7 @@ export default function SecurityBeyond() {
                                         {card.cta}
                                     </a>
                                 ) : (
-                                    <a href="#" className="text-base font-medium text-tealdark hover:underline">
+                                    <a className="text-base font-medium text-tealdark hover:underline cursor-pointer">
                                         {card.cta}
                                     </a>
                                 )}

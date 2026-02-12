@@ -329,7 +329,7 @@ const CreateAccount = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-5 top-5 text-primary dark:text-gray-500 cursor-pointer"
                 >
-                  {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                  {showPassword ? <FiEye size={18} /> : <FiEyeOff size={18} />}
                 </button>
                 <label
                   htmlFor="password"
@@ -382,9 +382,9 @@ const CreateAccount = () => {
                   className="absolute right-5 top-5 text-primary dark:text-gray-500 cursor-pointer"
                 >
                   {showConfirmPassword ? (
-                    <FiEyeOff size={18} />
-                  ) : (
                     <FiEye size={18} />
+                  ) : (
+                    <FiEyeOff size={18} />
                   )}
                 </button>
                 <label
@@ -411,14 +411,14 @@ const CreateAccount = () => {
                 </p>
                 <p className="text-13 text-primary dark:text-gray-500 font-medium">
                   <NavLink
-                    to={""}
+                    to="/terms-and-conditions"
                     className="text-darkbtn dark:text-gray-200 hover:underline"
                   >
                     {t.terms.title || "Terms of Service"}
                   </NavLink>
                   <span className="mx-1">{t.auth.and || "and"}</span>
                   <NavLink
-                    to={""}
+                    to="/privacy-policy"
                     className="text-darkbtn dark:text-gray-200 hover:underline"
                   >
                     {t.privacy.title || "Privacy Policy"}

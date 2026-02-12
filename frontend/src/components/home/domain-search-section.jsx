@@ -19,12 +19,12 @@ const HomeSearchDomain = () => {
         if (search) {
             path += `?value=${search}`
         }
-        navigate(path, { replace: true });
+        navigate(path);
     }
 
 
     const handleRedirectHosting = () => {
-        navigate("/hosting", { replace: true });
+        navigate("/hosting");
     }
 
     return (

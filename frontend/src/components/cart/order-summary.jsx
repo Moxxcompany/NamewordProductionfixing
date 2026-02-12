@@ -200,16 +200,16 @@ const OrderSummary = ({ itemsCount = 0, subtotal = 0, isGuestCart = false }) => 
               >
                 {t.cart.orderSummary.goToCheckout} <TbArrowRight size={18} />
               </button>
-            ) : (
-              <NavLink 
-                to={finalSubtotal === 0 ? "#" : "/payment-checkout"} 
-                className={`add-to-cart px-7 ${finalSubtotal === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
-                onClick={(e) => {
-                  if (finalSubtotal === 0) {
-                    e.preventDefault();
-                  }
-                }}
+            ) : finalSubtotal === 0 ? (
+              <button
+                type="button"
+                disabled
+                className="add-to-cart px-7 disable pointer-events-none"
               >
+                {t.cart.orderSummary.goToCheckout} <TbArrowRight size={18} />
+              </button>
+            ) : (
+              <NavLink to="/payment-checkout" className="add-to-cart px-7">
                 {t.cart.orderSummary.goToCheckout} <TbArrowRight size={18} />
               </NavLink>
             )}
