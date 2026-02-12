@@ -738,7 +738,7 @@ const RenewPlan = () => {
                       <span key={i}>
                         {beforePrivacy}
                         <NavLink
-                          to="/help-support"
+                          to="/privacy-policy"
                           className="text-teallight-500 font-semibold hover:underline"
                         >
                           {t.websites.renewPlan.privacyPolicy}
@@ -751,7 +751,7 @@ const RenewPlan = () => {
                     <span key={i}>
                       {part}
                       <NavLink
-                        to="/help-support"
+                        to="/terms-and-conditions"
                         className="text-teallight-500 font-semibold hover:underline"
                       >
                         {t.websites.renewPlan.termsOfService}

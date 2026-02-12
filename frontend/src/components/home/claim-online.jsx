@@ -64,7 +64,7 @@ export default function HeroSection() {
                             <div className="flex md:flex-row flex-col-reverse md:items-center mt-4">
                                 <div className="flex sm:flex-wrap sm:flex-row flex-col gap-4 text-13 text-lightgray-500 dark:text-gray-500">
                                     {t.home.claim.features.map((item, idx) => (
-                                        <div className="flex items-center gap-2 text-light-purple/70" key={item + idx}>
+                                        <div className="flex items-center gap-2 text-light-purple/70 font-medium" key={item + idx}>
                                             <FaCheck />
                                             {item}
                                         </div>
@@ -77,7 +77,7 @@ export default function HeroSection() {
 
                     {/* Bottom Feature Pills */}
                     <div className="w-full">
-                        <div className="flex flex-wrap gap-4">
+                        <div className="flex flex-wrap gap-2">
                             {t.home.claim.pills.map((pill, idx) => (
                                 <div className="feature-pills" key={pill + idx}>
                                     <img src={idx === 0 ? AI : idx === 1 ? DNS : SSD} alt={pill} className="text-tealdark w-6 h-6" />

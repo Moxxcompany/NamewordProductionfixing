@@ -30,6 +30,8 @@ const PricingPlans = () => {
     }
     return (
         <div id="pricing" className="flex flex-col justify-center items-center rounded-2xl overflow-hidden lg:my-24 md:my-20 my-16 max-w-3xl mx-auto">
+            <h2 className="contact-title mb-16">{t.home.pricing.unbeatablePricingPlans}</h2>
+
             <div className="pricing-plan w-full !rounded-b-none">
                 <div className="w-full grid md:grid-cols-3 grid-cols-2 mb-4">
 
@@ -84,7 +86,7 @@ const PricingPlans = () => {
                     className="globe-image dark:opacity-5"
                 />
                 <div className="flex flex-col w-full gap-6">
-                    <h4 className="lg:text-3xl sm:text-2xl text-xl text-primary dark:text-white font-medium">{t.home.pricing.ctaTitle}</h4>
+                    <h4 className="lg:text-3xl sm:text-2xl text-xl text-primary dark:text-white font-medium leading-8 w-72">{t.home.pricing.ctaTitle}</h4>
                     {/* Input Section */}
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex sm:flex-row flex-col items-center gap-3 w-full">

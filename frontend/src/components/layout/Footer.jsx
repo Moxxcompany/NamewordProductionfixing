@@ -37,6 +37,13 @@ const Footer = () => {
         }
     };
 
+    const handleProtectedClick = (path) => {
+        if (!user) {
+            localStorage.setItem("path", path);
+        }
+    };
+
+
     return (
         <div className="footer">
             {/* top footer menu */}
@@ -45,7 +52,7 @@ const Footer = () => {
                     <NavLink to="/" >
                         <img src={logo} alt={t.nav.logoAlt} title={t.nav.logoTitle} className="dark-mode" />
                     </NavLink>
-                    <p className="text-lightgray-500 text-15 font-medium" dangerouslySetInnerHTML={{ __html: t.footer.tagline.replace(/\. /g, '.<br/>') }}></p>
+                    <p className="text-lightgray-500 text-15 font-medium w-36" dangerouslySetInnerHTML={{ __html: t.footer.tagline.replace(/\. /g, '. ') }}></p>
                     <div>
                         <a href="tel:+12234123234" className="footer-contact">
                             <img src={phone} alt="phone" title="phone" className="dark-mode" />
@@ -63,22 +70,19 @@ const Footer = () => {
                         <a href="/home" onClick={handleDomainSearch} className="footer-link mb-3">{t.footer.domainSearch}</a>
                         <NavLink to="/hosting" className="footer-link mb-3">{t.footer.webEmailHosting}</NavLink>
 
-                        {user && (
+                        {/* {user && ( */}
                             <>
-                                <NavLink to="/setup-websites" className="footer-link mb-3">
+                                <NavLink to={user ? "/setup-websites" : "/sign-in"} onClick={() => handleProtectedClick("/setup-websites")} className="footer-link mb-3">
                                     {t.footer.webDesign}
                                 </NavLink>
-                                <NavLink
-                                    to="/account-setting?tab=api-key"
-                                    className="footer-link mb-3"
-                                >
+                                <NavLink to={user ? "/account-setting?tab=api-key" : "/sign-in"} onClick={() => handleProtectedClick("/account-setting?tab=api-key")} className="footer-link mb-3">
                                     {t.footer.developerAPI}
                                 </NavLink>
-                                <NavLink to="/account-setting" className="footer-link mb-3">
+                                <NavLink to={user ? "/account-setting" : "/sign-in"} onClick={() => handleProtectedClick("/account-setting")} className="footer-link mb-3">
                                     {t.footer.myAccount}
                                 </NavLink>
                             </>
-                        )}
+                        {/* )} */}
 
                     </div>
                     <div className="flex flex-col items-start justify-start">

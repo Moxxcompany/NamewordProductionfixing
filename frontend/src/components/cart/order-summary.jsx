@@ -217,11 +217,11 @@ const OrderSummary = ({ itemsCount = 0, subtotal = 0, isGuestCart = false }) => 
 
           <p className="text-13 font-medium text-teallight-400">
             {t.cart.orderSummary.checkoutAgreement}{" "}
-            <NavLink to="/help-support" className="text-teallight-500 hover:underline">
+            <NavLink to="/terms-and-conditions" className="text-teallight-500 hover:underline">
               {t.cart.orderSummary.termsOfService}
             </NavLink>{" "}
             {t.cart.orderSummary.andConfirm}{" "}
-            <NavLink to="/help-support" className="text-teallight-500 hover:underline">
+            <NavLink to="/privacy-policy" className="text-teallight-500 hover:underline">
               {t.cart.orderSummary.privacyPolicy}
             </NavLink>
             {t.cart.orderSummary.cancelRecurring}

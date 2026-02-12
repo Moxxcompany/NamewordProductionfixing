@@ -39,7 +39,7 @@ const HomeSearchDomain = () => {
 
                 <div className="home-search-section lg:w-3/4 w-full">
                     <h1>{t.home.hero.heading}</h1>
-                    <p className="text-lg text-primary dark:text-lightgray">{t.home.hero.subheading}</p>
+                    <p className="text-lg text-primary dark:text-lightgray font-medium">{t.home.hero.subheading}</p>
 
                     <div className="flex items-center mt-7">
                         <div className="w-full max-w-4xl">
@@ -83,7 +83,7 @@ const HomeSearchDomain = () => {
 
                             {/* Features */}
                             <div className="flex md:flex-row flex-col-reverse md:items-center mt-4 gap-2">
-                                <div className="flex sm:flex-wrap sm:flex-row flex-col gap-4 text-13 text-lightgray-500 dark:text-gray-500">
+                                <div className="flex sm:flex-wrap sm:flex-row flex-col gap-4 text-13 text-lightgray-500 dark:text-gray-500 font-medium">
                                     {t.home.hero.features.map((feature, idx) => (
                                         <div className="flex items-center gap-2" key={feature + idx}>
                                             <FaCheck />

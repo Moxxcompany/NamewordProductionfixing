@@ -24,7 +24,7 @@ export default function OurClients() {
 
   return (
     <section className="xl:w-10/12 w-full mx-auto">
-      <h2 className="contact-title lg:mb-16 md:mb-10 mb-8 xl:text-right">
+      <h2 className="contact-title lg:mb-16 md:mb-10 mb-8 md:max-w-md md:ml-auto">
         {t.home.clients.title}
       </h2>
       <div className="relative md:px-10 px-2">

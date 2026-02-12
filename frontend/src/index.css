@@ -173,7 +173,12 @@ select {
 }
 
 .social-link {
-  @apply text-darkbtn hover:text-darkbtn-hover dark:text-gray-500 hover:dark:text-white text-2xl;
+  @apply text-darkbtn hover:text-darkbtn-hover dark:text-gray-500 hover:dark:text-white;
+  
+}
+.social-link svg{
+  width: 26px;
+  height: 26px; 
 }
 
 /*---------------- search-section --------------*/
@@ -194,7 +199,7 @@ select {
 }
 
 .btn-blue {
-  @apply bg-darkbtn hover:bg-darkbtn-hover active:bg-darkbtn-active text-white rounded-md w-48 flex justify-center items-center h-16 cursor-pointer;
+  @apply bg-darkbtn hover:bg-darkbtn-hover active:bg-darkbtn-active text-white rounded-md w-48 flex justify-center items-center h-16 cursor-pointer font-medium;
 }
 
 .search-list {
@@ -820,7 +825,7 @@ input[type="checkbox"]:checked {
 }
 
 .feature-bg {
-  @apply bg-white dark:bg-gray-900 px-5 py-4 rounded-md flex items-center gap-2 text-primary dark:text-white text-15 font-medium;
+  @apply bg-white dark:bg-gray-900 px-5 py-4 rounded-md flex items-center gap-2 text-primary dark:text-white text-lg font-medium;
 }
 
 .home-search.search-input {
@@ -836,7 +841,7 @@ input[type="checkbox"]:checked {
 }
 
 .point-banner {
-  @apply bg-darkbtn rounded-2xl px-6 py-5 text-white relative overflow-hidden md:bg-[40%] bg-cover;
+  @apply bg-darkbtn rounded-2xl px-6 py-4 text-white relative overflow-hidden md:bg-[40%] bg-cover;
   background-image: url(../src/assets/images/point-bg-img.png);
   background-position: center right;
   background-repeat: no-repeat;

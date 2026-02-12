@@ -98,6 +98,7 @@ export const en = {
       ]
     },
     pricing: {
+      unbeatablePricingPlans: "Unbeatable pricing and plans",
       domainHeader: "Domain",
       competitorsHeader: "Competitors",
       namewordHeader: "NameWord",

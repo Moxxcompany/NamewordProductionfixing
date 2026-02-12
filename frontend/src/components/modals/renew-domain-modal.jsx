@@ -461,11 +461,11 @@ const RenewDomainModal = ({
 
                 <p className="text-13 font-medium text-secondary">
                   {t.admin.byCheckingOut}{" "}
-                  <NavLink to="/help-support" className="text-teallight-500 font-semibold hover:underline">
+                  <NavLink to="/terms-and-conditions" className="text-teallight-500 font-semibold hover:underline">
                     {t.admin.termsOfService}
                   </NavLink>{" "}
                   {t.admin.andConfirmThat}{" "}
-                  <NavLink to="/help-support" className="text-teallight-500 font-semibold hover:underline">
+                  <NavLink to="/privacy-policy" className="text-teallight-500 font-semibold hover:underline">
                     {t.admin.privacyPolicy}
                   </NavLink>
                   . {t.admin.youCanCancel}

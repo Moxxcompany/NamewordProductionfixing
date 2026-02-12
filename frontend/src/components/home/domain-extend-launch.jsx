@@ -34,7 +34,7 @@ export default function StartWithDomain() {
                         <p>{t.home.extendLaunch.hosting.description}</p>
                         <div className="flex flex-wrap md:flex-row flex-col gap-4 text-13 text-lightgray-500 dark:text-white w-full">
                             {t.home.extendLaunch.hosting.features.map((item, idx) => (
-                                <div className="flex items-center gap-2 text-[#3D5656] dark:text-white/70" key={item + idx}>
+                                <div className="flex items-center gap-2 text-[#3D5656] dark:text-white/70 font-medium" key={item + idx}>
                                     <FaCheck />
                                     {item}
                                 </div>
@@ -62,7 +62,7 @@ export default function StartWithDomain() {
                         <p>{t.home.extendLaunch.design.description}</p>
                         <div className="flex flex-wrap md:flex-row flex-col gap-4 text-13 text-lightgray-500 dark:text-white w-full">
                             {t.home.extendLaunch.design.features.map((item, idx) => (
-                                <div className="flex items-center gap-2 text-[#565176] dark:text-white/70" key={item + idx}>
+                                <div className="flex items-center gap-2 text-[#565176] dark:text-white/70 font-medium" key={item + idx}>
                                     <FaCheck />
                                     {item}
                                 </div>
