@@ -46,14 +46,15 @@ const Navbar = ({ isLoader = false}) => {
 						}
 					</NavLink>
 
-					<div className={`lg:flex justify-between items-start lg:items-center max-lg:w-full flex-col lg:flex-row pt-5 lg:pt-0 gap-12 lg:gap-0 p-5 lg:p-0 ${isOpen ? "flex flex-col-reverse" : "hidden"}`}>
+					<div className={`lg:flex justify-between items-end lg:items-center max-lg:w-full flex-col lg:flex-row pt-5 lg:pt-0 gap-12 lg:gap-0 p-5 lg:p-0 ${isOpen ? "flex flex-col-reverse" : "hidden"}`}>
 						<ul className="flex justify-center items-start lg:items-center gap-10 flex-col lg:flex-row">
 							<li>
-								<NavLink to="/home" className="navlink">{t.nav.home}</NavLink>
+								<NavLink to="/home" className="navlink" onClick={() => setIsOpen(false)}>{t.nav.home}</NavLink>
 							</li>
 							<li>
 								<NavLink to="/#services"
 									onClick={(e) => {
+										setIsOpen(false);
 										if (window.location.pathname === "/" ) {
 										e.preventDefault();
 										const element = document.querySelector("#services");
@@ -69,6 +70,7 @@ const Navbar = ({ isLoader = false}) => {
 								<NavLink
 									to="/#pricing"
 									onClick={(e) => {
+										setIsOpen(false);
 										if (window.location.pathname === "/" ) {
 										e.preventDefault();
 										const element = document.querySelector("#pricing");
@@ -84,10 +86,10 @@ const Navbar = ({ isLoader = false}) => {
 								</NavLink>
 							</li>
 							<li>
-								<NavLink to="/help-support#need-help" className="navlink">{t.nav.contact}</NavLink>
+								<NavLink to="/help-support#need-help" className="navlink" onClick={() => setIsOpen(false)}>{t.nav.contact}</NavLink>
 							</li>
 							<li>
-								<NavLink to="/help-support#discover-domains" className="navlink">{t.nav.faq}</NavLink>
+								<NavLink to="/help-support#discover-domains" className="navlink" onClick={() => setIsOpen(false)}>{t.nav.faq}</NavLink>
 							</li>
 						</ul>
 
@@ -127,12 +129,12 @@ const Navbar = ({ isLoader = false}) => {
 						</div>
 					</>
 						:
-						<ul className={`${isOpen ? "flex" : "hidden"} lg:flex justify-center items-start lg:items-center 2xl:gap-10 gap-8 flex-col lg:flex-row p-5 lg:p-0`}>
+						<ul className={`${isOpen ? "flex" : "hidden"} lg:flex justify-center items-end lg:w-auto w-full lg:items-center 2xl:gap-10 gap-8 flex-col lg:flex-row p-5 lg:p-0`}>
 							<li>
-								<NavLink to="/sign-in" className="navlink">{t.nav.signIn}</NavLink>
+								<NavLink to="/sign-in" className="navlink" onClick={() => setIsOpen(false)}>{t.nav.signIn}</NavLink>
 							</li>
 							<li>
-								<NavLink to="/create-account" className="navlink">{t.nav.createAccount}</NavLink>
+								<NavLink to="/create-account" className="navlink" onClick={() => setIsOpen(false)}>{t.nav.createAccount}</NavLink>
 							</li>
 						</ul>}
 				</nav>

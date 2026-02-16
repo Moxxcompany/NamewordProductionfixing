@@ -82,7 +82,7 @@ const HomeSearchDomain = () => {
                             </div>
 
                             {/* Features */}
-                            <div className="flex md:flex-row flex-col-reverse md:items-center mt-4 gap-2">
+                            <div className="flex md:flex-row flex-col-reverse md:items-center items-start mt-4 gap-2">
                                 <div className="flex sm:flex-wrap sm:flex-row flex-col gap-4 text-13 text-lightgray-500 dark:text-gray-500 font-medium">
                                     {t.home.hero.features.map((feature, idx) => (
                                         <div className="flex items-center gap-2" key={feature + idx}>
@@ -91,7 +91,7 @@ const HomeSearchDomain = () => {
                                         </div>
                                     ))}
                                 </div>
-                                <button type="button" className="text-darkbtn dark:text-gray-500 text-15 font-medium 2xl:ml-24 lg:ml-10 cursor-pointer" onClick={handleRedirectHosting}>{t.home.hero.needHosting}</button>
+                                <button type="button" className="text-darkbtn dark:text-gray-500 text-15 font-medium 2xl:ml-24 lg:ml-10 cursor-pointer md:mb-0 mb-4" onClick={handleRedirectHosting}>{t.home.hero.needHosting}</button>
                             </div>
                         </div>
                     </div>

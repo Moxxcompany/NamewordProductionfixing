@@ -14,7 +14,7 @@ export default function StartWithDomain() {
     }
   return (
     <section className="lg:my-24 md:my-20 my-16 xl:w-10/12 w-full mx-auto" id="services">
-        <h2 className="contact-title mb-14 lg:pl-16">
+        <h2 className="contact-title mb-14 lg:pl-16 sm:w-auto w-11/12">
             {t.home.extendLaunch.title}
         </h2>
 
@@ -25,7 +25,7 @@ export default function StartWithDomain() {
                     <img
                         src={webHosting}
                         alt="Web Hosting"
-                        className="w-full object-cover"
+                        className="w-full object-cover h-full"
                     />
                 </div>
                 <div className="lunch-card-content bg-light-green dark:bg-gray-800">
@@ -53,7 +53,7 @@ export default function StartWithDomain() {
                     <img
                         src={proDesign}
                         alt="Web Hosting"
-                        className="w-full object-cover"
+                        className="w-full object-cover h-full"
                     />
                 </div>
                 <div className="lunch-card-content bg-light-purple dark:bg-gray-800">

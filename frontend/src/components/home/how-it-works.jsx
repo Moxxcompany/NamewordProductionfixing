@@ -10,7 +10,7 @@ export default function HowItWorks() {
     <section className="w-full bg-white dark:bg-gray-900 rounded-3xl py-10 md:py-14 px-4 how-works-section mb-5">
         <div className="xl:w-10/12 w-full mx-auto gap-12 flex lg:flex-row flex-col items-end">
             <div className="lg:w-3/5 w-full">
-                <h2 className="contact-title mb-12">
+                <h2 className="contact-title mb-12 sm:text-start text-center">
                     {t.home.howItWorks.title}
                 </h2>
 

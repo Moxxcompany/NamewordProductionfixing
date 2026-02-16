@@ -88,7 +88,9 @@ const Footer = () => {
                     <div className="flex flex-col items-start justify-start">
                         <p className="footer-menu">{t.footer.support}</p>
                         <NavLink to="/help-support" className="footer-link mb-3">{t.footer.contactUs}</NavLink>
-                        <a href="#" onClick={handleQuickChat} className="footer-link mb-3">{t.footer.quickChat}</a>
+                        {(import.meta.env.VITE_SHOW_CHAT === "true" || import.meta.env.VITE_SHOW_CHAT === true) && (
+                            <a href="#" onClick={handleQuickChat} className="footer-link mb-3">{t.footer.quickChat}</a>
+                        )}
                         <NavLink to="/help-support" className="footer-link mb-3">{t.footer.helpDesk}</NavLink>
                     </div>
                     <div className="flex flex-col items-start justify-start">

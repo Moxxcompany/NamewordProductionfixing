@@ -860,7 +860,7 @@ input[type="checkbox"]:checked {
 }
 
 .polygon1 {
-  @apply absolute top-0 left-0 z-10;
+  @apply absolute lg:top-0 lg:left-0 -left-6 -top-4  z-10;
 }
 
 .polygon2 {
@@ -888,7 +888,7 @@ input[type="checkbox"]:checked {
 }
 
 .lunch-card {
-  @apply rounded-2xl overflow-hidden;
+  @apply rounded-2xl overflow-hidden h-80;
 }
 
 .lunch-card-content {

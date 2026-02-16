@@ -5,6 +5,8 @@ import LiveChat from '../components/LiveChat'
 // import Loader from '../components/common/Loader'
 
 const MainLayout = ({children}) => {
+  const showChat = import.meta.env.VITE_SHOW_CHAT === "true" || import.meta.env.VITE_SHOW_CHAT === true;
+
   return (
     <div>
       {/* <Loader /> */}
@@ -13,7 +15,7 @@ const MainLayout = ({children}) => {
         {children}
       </div>
       <Footer />
-      <LiveChat />
+      {showChat && <LiveChat />}
     </div>
   )
 }

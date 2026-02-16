@@ -13,7 +13,7 @@ const ContactInfo = () => {
                 <div className='xl:w-10/12 w-full mx-auto'>
                     <div className='grid grid-cols-1 lg:grid-cols-5 w-full gap-6 h-full'>
                         <div className='w-full lg:col-span-2 grid grid-cols-1 gap-5 h-full'>
-                            <p className='contact-title mb-5 lg:mb-5 xl:mb-5 2xl:mb-0 3xl:mb-9'>34,224 <br/>{t.contactInfo.customersChose}<br/> <span className='text-darkbtn dark:text-white'>NameWord</span></p>
+                            <p className='contact-title mb-5 lg:mb-5 xl:mb-5 2xl:mb-0 3xl:mb-9 sm:w-auto w-4/5'>34,224 <br/>{t.contactInfo.customersChose}<br/> <span className='text-darkbtn dark:text-white'>NameWord</span></p>
 
                             <div className='contact-card h-full'>
                                 <img src={eye} alt={t.contactInfo.zeroHiddenFees} title={t.contactInfo.zeroHiddenFees} className="dark-mode" />

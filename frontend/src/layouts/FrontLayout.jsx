@@ -156,7 +156,7 @@ const FrontLayout = () => {
 					</div>
 				</div>
 			</div>
-			<LiveChat />
+			{(import.meta.env.VITE_SHOW_CHAT === "true" || import.meta.env.VITE_SHOW_CHAT === true) && <LiveChat />}
 		</div>
 	)
 }

@@ -245,6 +245,18 @@ const LiveChat = () => {
     }
   };
 
+  const handleCloseChat = () => {
+    setIsOpen(false);
+    setMessages([]);
+    setInputMessage('');
+    setIsTyping(false);
+    lastUserMessageTimeRef.current = null;
+    // Create new session so next open starts fresh
+    const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    setSessionId(newSessionId);
+    localStorage.setItem('chatSessionId', newSessionId);
+  };
+
   const formatTime = (date) => {
     if (!date) return '';
 
@@ -281,7 +293,7 @@ const LiveChat = () => {
               </div>
             </div>
             <button
-              onClick={() => setIsOpen(false)}
+              onClick={handleCloseChat}
               className="p-2 hover:bg-white/20 rounded-full transition-colors"
               aria-label={t.chat.closeChat}
             >
