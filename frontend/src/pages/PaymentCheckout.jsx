@@ -121,20 +121,35 @@ const PaymentCheckout = () => {
     return () => clearInterval(interval);
   }, [user]);
 
-  const cartItems = cartData?.items || [];
+  // Safely extract cart items - ensure we use actual cart items array only
+  const cartItems = useMemo(() => {
+    const raw = cartData?.items;
+    if (!Array.isArray(raw)) return [];
+    return raw;
+  }, [cartData?.items]);
+
+  // Only count items explicitly in cart (status in_cart or undefined)
+  const inCartItems = useMemo(
+    () =>
+      cartItems.filter(
+        (item) => item?.status === "in_cart" || item?.status === undefined
+      ),
+    [cartItems]
+  );
+
   const domainItems = useMemo(
     () =>
       isRenewalCheckout
         ? []
-        : cartItems.filter((item) => item.itemType === "domain"),
-    [cartItems, isRenewalCheckout]
+        : inCartItems.filter((item) => item?.itemType === "domain"),
+    [inCartItems, isRenewalCheckout]
   );
   const hostingItems = useMemo(
     () =>
       isRenewalCheckout
         ? []
-        : cartItems.filter((item) => item.itemType === "hosting"),
-    [cartItems, isRenewalCheckout]
+        : inCartItems.filter((item) => item?.itemType === "hosting"),
+    [inCartItems, isRenewalCheckout]
   );
   const hostingItemIds = useMemo(
     () => hostingItems.map((item) => item?._id).filter(Boolean),

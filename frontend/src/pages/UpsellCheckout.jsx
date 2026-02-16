@@ -289,7 +289,7 @@ const UpsellCheckout = () => {
     }
 
     if (selectedPlan === "none") {
-      navigate("/payment-checkout");
+      navigate("/cart");
       return;
     }
 
@@ -379,7 +379,7 @@ const UpsellCheckout = () => {
       }
 
       showAlert(t.pages.hostingPlanAddedToCart || "Hosting plan added to cart", { type: "success" });
-      navigate("/payment-checkout");
+      navigate("/cart");
     } catch (error) {
       console.error("Error in handleContinue:", error);
       showAlert(
