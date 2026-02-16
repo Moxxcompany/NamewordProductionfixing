@@ -34,6 +34,7 @@ const defaultAuthValue = {
   deleteAccount: async () => ({ error: "AuthProvider not initialized" }),
   clearstorage: () => {},
   unlinkGoogleAccount: async () => ({ error: "AuthProvider not initialized" }),
+  unlinkTelegramAccount: async () => ({ error: "AuthProvider not initialized" }),
   verify2FA: async () => ({ error: "AuthProvider not initialized" }),
   changeEmail: async () => ({ error: "AuthProvider not initialized" }),
 };
@@ -470,6 +471,26 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const unlinkTelegramAccount = async () => {
+    try {
+      const response = await authAPI.unlinkTelegramAccount();
+      localStorage.setItem("user", JSON.stringify(response.user));
+      updateUser(response.user);
+      return { ...response, success: true };
+    } catch (error) {
+      if (error?.response?.data?.errors) {
+        return {
+          error: error?.response?.data?.errors[0]?.message,
+          success: false,
+        };
+      } else {
+        const errorMessage =
+          error?.response?.data?.message || "Failed to unlink Telegram account.";
+        return { error: errorMessage, success: false };
+      }
+    }
+  };
+
   const deleteAccount = async () => {
     try {
       const response = await authAPI.deleteAccount();
@@ -514,6 +535,7 @@ export const AuthProvider = ({ children }) => {
     deleteAccount,
     clearstorage,
     unlinkGoogleAccount,
+    unlinkTelegramAccount,
     verify2FA,
     changeEmail,
   };

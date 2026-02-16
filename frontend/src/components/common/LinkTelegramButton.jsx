@@ -10,30 +10,44 @@ const LinkTelegramButton = ({ loading, setLoading }) => {
   const { showAlert } = useAlert();
   const { t } = useLanguage();
 
-  const onTelegramAuth = async (user) => {
+  const onTelegramAuth = async (user, reclaim = false) => {
     try {
       setLoading(true);
-      const data = await linkTelegramAccount(user);
+      const payload = reclaim ? { ...user, reclaim: true } : user;
+      const data = await linkTelegramAccount(payload);
       if (data?.success) {
         showAlert(data?.message || t.admin.telegramLinkedSuccess || 'Telegram account linked successfully', {
           duration: 2500,
           type: 'success',
         });
       } else {
-        showAlert(data?.error || t.admin.failedToLinkTelegram || 'Failed to link Telegram account', {
-          duration: 2500,
-          type: 'warning',
-        });
+        const errorMsg = data?.error || t.admin.failedToLinkTelegram || 'Failed to link Telegram account';
+        if (errorMsg.includes('already linked to another user') && !reclaim) {
+          const reclaimConfirm = window.confirm(
+            t.admin.telegramAlreadyLinkedReclaim ||
+            'This Telegram account is already linked to another account. Do you want to unlink it from that account and link it to this one?'
+          );
+          if (reclaimConfirm) {
+            await onTelegramAuth(user, true);
+            return;
+          }
+        }
+        showAlert(errorMsg, { duration: 2500, type: 'warning' });
       }
     } catch (error) {
       console.error('Telegram link failed:', error);
-      showAlert(
-        error?.response?.data?.error ||
-          error?.message ||
-          t.admin.failedToLinkTelegram ||
-          'Failed to link Telegram account',
-        { duration: 2500, type: 'warning' }
-      );
+      const errorMsg = error?.response?.data?.error || error?.message || t.admin.failedToLinkTelegram || 'Failed to link Telegram account';
+      if (errorMsg.includes('already linked to another user') && !reclaim) {
+        const reclaimConfirm = window.confirm(
+          t.admin.telegramAlreadyLinkedReclaim ||
+          'This Telegram account is already linked to another account. Do you want to unlink it from that account and link it to this one?'
+        );
+        if (reclaimConfirm) {
+          await onTelegramAuth(user, true);
+          return;
+        }
+      }
+      showAlert(errorMsg, { duration: 2500, type: 'warning' });
     } finally {
       setLoading(false);
     }
@@ -51,22 +65,48 @@ const LinkTelegramButton = ({ loading, setLoading }) => {
 
     window.onTelegramAuth = onTelegramAuth;
 
-    if (telegramWrapperRef.current) {
-      telegramWrapperRef.current.appendChild(scriptElement);
-    }
+    const container = telegramWrapperRef.current;
+    if (!container) return;
+
+    container.appendChild(scriptElement);
+
+    const forceIframeFullSize = () => {
+      const iframe = container.querySelector('iframe');
+      if (iframe) {
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.minHeight = '36px';
+      }
+    };
+
+    const observer = new MutationObserver(forceIframeFullSize);
+    observer.observe(container, { childList: true, subtree: true });
+    forceIframeFullSize();
 
     return () => {
-      if (telegramWrapperRef.current) {
-        telegramWrapperRef.current.innerHTML = '';
-      }
+      observer.disconnect();
+      container.innerHTML = '';
     };
   }, []);
 
   return (
-    <div className="flex items-center gap-2">
-      <div ref={telegramWrapperRef} className="min-h-[24px]" />
+    <div className="relative">
+      <button
+        type="button"
+        className={`btn-outline small pointer-events-none z-10 relative ${loading ? 'disable' : ''}`}
+        disabled={loading}
+        aria-hidden
+      >
+        {t.admin.linkTelegram || 'Link Telegram'}
+      </button>
+      <div
+        ref={telegramWrapperRef}
+        className="absolute inset-0 z-20 [&>iframe]:!w-full [&>iframe]:!h-full [&>iframe]:!min-h-[36px]"
+        style={{ opacity: 0 }}
+        aria-hidden
+      />
       {loading && (
-        <span className="text-xs text-secondary">{t.admin.linking || 'Linking...'}</span>
+        <div className="absolute inset-0 z-30 cursor-not-allowed" aria-hidden />
       )}
     </div>
   );

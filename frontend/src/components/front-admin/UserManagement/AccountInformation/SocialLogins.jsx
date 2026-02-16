@@ -12,7 +12,7 @@ import LinkTelegramButton from "../../../common/LinkTelegramButton";
 
 const SocialLogins = () => {
     const { t } = useLanguage();
-    const { user, unlinkGoogleAccount, setError } = useAuth();
+    const { user, unlinkGoogleAccount, unlinkTelegramAccount } = useAuth();
     const params = useSearchMessages();
     const navigate = useNavigate();
     const { showAlert } = useAlert();
@@ -35,13 +35,22 @@ const SocialLogins = () => {
 
     const handleUnlinkGoogleAccount = async() => {
         setLoading(true);
-
         const result = await unlinkGoogleAccount();
-
         if(result?.success){
             showAlert(result?.message, { duration: 2500, type: 'success' });
         }else{
             showAlert(result?.error || t.admin.failedToUnlinkGoogle, { duration: 2500, type: 'warning' });
+        }
+        setLoading(false);
+    }
+
+    const handleUnlinkTelegramAccount = async() => {
+        setLoading(true);
+        const result = await unlinkTelegramAccount();
+        if(result?.success){
+            showAlert(result?.message, { duration: 2500, type: 'success' });
+        }else{
+            showAlert(result?.error || t.admin.failedToUnlinkTelegram, { duration: 2500, type: 'warning' });
         }
         setLoading(false);
     }
@@ -78,6 +87,7 @@ const SocialLogins = () => {
                             <p className='text-13 text-sucess-400 font-medium flex items-center gap-2 min-w-1/12'>
                                 <IoCheckmarkOutline size={14} /> {t.admin.enabled}
                             </p>
+                            <button className="btn-outline unlink-btn small" type="button" onClick={handleUnlinkTelegramAccount} disabled={loading}>{t.admin.unlinkTelegram}</button>
                         </>
                     ) : (
                         <>

@@ -273,13 +273,19 @@ class SocialAuthController {
             }
 
             const validator = new AuthDataValidator({ botToken: process.env.TELEGRAM_BOT_TOKEN });
-            const data = objectToAuthDataMap(req.body);
+            const { reclaim, ...authBody } = req.body;
+            const data = objectToAuthDataMap(authBody);
             const userData = await validator.validate(data);
             const telegramId = userData.id;
 
             const existingWithTelegramId = await User.findOne({ telegramId });
             if (existingWithTelegramId && existingWithTelegramId._id.toString() !== currentUserId) {
-                return res.status(400).json({ error: 'This Telegram account is already linked to another user.', success: false });
+                // Allow reclaim: unlink from the other user and link to current user
+                if (reclaim === true) {
+                    await User.updateOne({ _id: existingWithTelegramId._id }, { $unset: { telegramId: "" } });
+                } else {
+                    return res.status(400).json({ error: 'This Telegram account is already linked to another user.', success: false });
+                }
             }
 
             const user = await User.findById(currentUserId);
@@ -300,6 +306,47 @@ class SocialAuthController {
                 'Telegram linking failed';
             return res.status(400).json({ error: errorMessage, success: false });
         }
+    }
+
+    async unlinkTelegramAccount(req, res) {
+        const userId = req.user?.id;
+
+        if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        if (!user.telegramId) {
+            return res.status(400).json({
+                message: 'No Telegram account is currently linked to your profile.'
+            });
+        }
+
+        await User.updateOne({ _id: userId }, { $unset: { telegramId: "" } });
+
+        const updatedUser = await User.findById(userId)
+            .populate("membershipTier")
+            .populate("badges.badge")
+            .populate({
+                path: 'apiKeys',
+                match: {
+                    expiresAt: { $gt: new Date() },
+                    deletedAt: null
+                },
+                options: {
+                    sort: { createdAt: -1 },
+                    limit: 1
+                }
+            });
+        const latestApiKey = updatedUser.apiKeys?.length > 0 ? updatedUser.apiKeys[0].toJSON({ virtuals: true }) : null;
+        let rewardPoints = await updatedUser.rewardPoints();
+
+        let userData = await updatedUser.getProfileWithSignedURL();
+        userData._doc.hasPassword = !!user.password;
+        userData._doc.latestApiKey = latestApiKey;
+        userData._doc.rewardPoints = rewardPoints;
+
+        return res.status(200).json({ success: true, message: 'Telegram account unlinked', user: userData });
     }
 
 }

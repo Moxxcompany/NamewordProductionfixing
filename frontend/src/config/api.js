@@ -31,6 +31,7 @@ export const ENDPOINTS = {
     SEND_EMAIL_CODE: '/auth/send-email-code',
     TELEGRAM_LOGIN: '/auth/telegram',
     TELEGRAM_LINK: '/auth/telegram/link',
+    TELEGRAM_UNLINK: '/auth/telegram/unlink',
     ACCOUNT_DETAIL: '/auth/update-userDetails',
     CHANGE_PASSWORD: '/auth/change-password',
     DELETE_ACCOUNT: '/auth/delete-account',

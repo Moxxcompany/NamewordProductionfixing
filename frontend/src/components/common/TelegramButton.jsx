@@ -73,17 +73,23 @@ const TelegramButton = ({ loading, setLoading, telegramLoading }) => {
 
   return (
     <div className="relative w-full">
-      <div ref={telegramWrapperRef} className="absolute inset-0 [&>iframe]:!w-full [&>iframe]:!h-full [&>iframe]:!min-h-[44px]" aria-hidden />
       <button
-        className={`btn-outline w-full max-w-full pointer-events-none z-10 relative ${loading || telegramLoading ? "disable" : ""}`}
+        type="button"
+        className={`btn-outline max-w-full w-full pointer-events-none z-10 relative ${loading || telegramLoading ? "disable" : ""}`}
         disabled={loading || telegramLoading}
         aria-hidden
       >
         <img src={telegram} alt="Telegram" className="w-5 h-5" />
         {t.common.telegram.continueWith}
       </button>
+      <div
+        ref={telegramWrapperRef}
+        className="absolute inset-0 z-20 [&>iframe]:!w-full [&>iframe]:!h-full [&>iframe]:!min-h-[44px]"
+        style={{ opacity: 0 }}
+        aria-hidden
+      />
       {(loading || telegramLoading) && (
-        <div className="absolute inset-0 z-20 cursor-not-allowed" aria-hidden />
+        <div className="absolute inset-0 z-30 cursor-not-allowed" aria-hidden />
       )}
     </div>
   )

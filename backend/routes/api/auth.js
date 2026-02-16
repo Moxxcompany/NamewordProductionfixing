@@ -30,6 +30,7 @@ router.post("/reset-password", passwordResetRules, validateRequest, PasswordRese
 router.post("/change-password", currentUser, requireAuth, changePasswordRules, validateRequest, UserController.changePassword);
 router.post("/telegram", SocialAuthController.telegramCallback);
 router.post("/telegram/link", currentUser, requireAuth, SocialAuthController.linkTelegramAccount);
+router.get("/telegram/unlink", currentUser, requireAuth, SocialAuthController.unlinkTelegramAccount);
 router.post("/send-email-code", emailRules, validateRequest, VerificationController.sendEmailVerificationCode);
 router.post("/send-mobile-otp", sendMobileOtpRules, validateRequest, VerificationController.sendMobileOTP);
 router.post("/verify-mobile-otp", verifyMobileOtpRules, validateRequest, VerificationController.verifyMobileOTP);
