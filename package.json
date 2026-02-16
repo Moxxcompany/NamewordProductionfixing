@@ -1,0 +1,10 @@
+{
+  "name": "nameword-root",
+  "version": "1.0.0",
+  "scripts": {
+    "install-all": "cd backend && npm install && cd ../frontend && npm install",
+    "build": "npm run build --prefix frontend",
+    "start": "node backend/bin/www",
+    "dev": "nodemon backend/bin/www"
+  }
+}

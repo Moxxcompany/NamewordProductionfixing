@@ -35,24 +35,8 @@ const allowedOrigins = process.env.CORS_ORIGIN
 // Configure CORS - Allow all origins
 app.use(
 	cors({
-		origin: function (origin, callback) {
-			// Postman / server-to-server requests
-			if (!origin) return callback(null, true);                                                            
-
-			if (allowedOrigins.includes(origin)) {
-				return callback(null, true);
-			}
-
-			return callback(new Error("CORS not allowed"));
-		},
+		origin: true,
 		credentials: true,
-		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-		allowedHeaders: [
-			"Content-Type",
-			"Authorization",
-			"X-Requested-With",
-			"X-API-Key",
-		],
 	})
 );
 app.use(express.json());
@@ -102,14 +86,23 @@ require("./app/models/Badge");
 require("./start/logging")();
 require("./routes")(app); 
 
-if (process.env.NODE_ENV !== "development") {
-	app.use(express.static(path.join(__dirname, "client/dist"))); 
-  	app.get("*", (req, res) => { 
-		return res.sendFile(
-			path.resolve(__dirname, "client", "dist", "index.html")
-		); 
-	});      
-}        
+// if (process.env.NODE_ENV !== "development") {
+// 	app.use(express.static(path.join(__dirname, "client/dist"))); 
+//   	app.get("*", (req, res) => { 
+// 		return res.sendFile(
+// 			path.resolve(__dirname, "client", "dist", "index.html")
+// 		); 
+// 	});      
+// }        
+
+const frontendPath = path.join(__dirname, "../frontend/dist");
+
+// Serve static files
+app.use(express.static(frontendPath));
+
+app.get("*", (req, res) => {
+	res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+});
 
 Sentry.setupExpressErrorHandler(app);
 

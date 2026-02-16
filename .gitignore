@@ -54,3 +54,6 @@ info.txt
 api.http
 loyalty-reward .md
 .yarn
+
+backend/.pnp.cjs
+backend/.pnp.loader.mjs
