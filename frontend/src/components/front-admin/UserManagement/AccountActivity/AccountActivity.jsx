@@ -62,7 +62,7 @@ const AccountActivity = () => {
             cell: ({ row }) => (
                 <button
                     className="btn-outline"
-                    onClick={() => logoutUserSession(row.original.id)}
+                    onClick={() => logoutUserSession(row.original.id || row.original._id, row.original?.isCurrent)}
                 >
                     {t.admin.logout}
                 </button>

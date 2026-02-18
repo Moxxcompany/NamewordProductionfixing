@@ -10,7 +10,7 @@ class SessionController {
 
 
       const sessionsWithCurrentFlag = sessions.map(session => {
-        const sessionObj = session.toObject();
+        const sessionObj = session.toJSON();
         sessionObj.isCurrent = session._id.toString() === req?.user?.sessionId?.toString();
         return sessionObj;
       });
@@ -33,7 +33,7 @@ class SessionController {
   async logoutAll(req, res, next) {
     try {
       await UserSession.deleteMany({ userId: req.user.id, _id: { $ne: req?.user?.sessionId } });
-      res.json({ message: "Logged out from all devices", success: true });
+      res.json({ message: "Logged out from all devices", success: true, sessionId: req?.user?.sessionId });
     } catch (error) {
       next(error);
     }
