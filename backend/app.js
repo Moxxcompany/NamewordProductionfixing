@@ -18,7 +18,8 @@ const env = require("./start/env");
 const { initializeSentry, Sentry } = require("./start/sentry");
 // initializeSentry();
 
-nunjucks.configure("views", { autoescape: true });                                                                                                                                                                        
+// nunjucks.configure("views", { autoescape: true });                                                                                                                                                                        
+nunjucks.configure(path.join(__dirname, "views"), { autoescape: true });    
                                                                                                     
 const app = express ();
 
