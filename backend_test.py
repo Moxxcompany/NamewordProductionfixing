@@ -142,7 +142,7 @@ def main():
         "name": "Test Browser User",
         "username": f"testbrowser{timestamp}",
         "email": f"testbrowser{timestamp}@example.com",
-        "mobile": "11234567890",
+        "mobile": f"9{timestamp}1234",  # Generate unique mobile starting with 9
         "password": "Test@1234",
         "passwordConfirmation": "Test@1234"
     }
