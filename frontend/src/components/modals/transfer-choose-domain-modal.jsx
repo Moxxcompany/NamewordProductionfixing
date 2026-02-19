@@ -179,7 +179,9 @@ const TransferChooseDomainModal = ({
               {domainData?.domainName || t.admin.domainPlaceholder || "domain.com"}
             </span>
             <h2 className="modal-title">
-              {t.admin.transferDomain}
+              {typeof t.admin.transferDomain === 'string'
+                ? t.admin.transferDomain
+                : t.admin.transferDomain?.title}
               <p className="text-15 font-medium text-secondary mt-1">
                 {t.admin.chooseDomainRenewalPeriod}
               </p>

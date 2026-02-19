@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { NavLink, useParams } from "react-router";
 import PropTypes from "prop-types";
 import { FiCheck } from "react-icons/fi";
 import { PiWarningBold } from "react-icons/pi";
@@ -12,22 +12,30 @@ import { dnsAPI, domainAPI } from "../../../api/domains";
 import { useLanguage } from "../../../hooks/useLanguage";
 
 const EssentialsCard = ({ viewDomain, contactInfo, currentDomain, onRefreshDomain }) => {
+  const { domainName: domainNameParam } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const { showAlert } = useAlert();
   const { t } = useLanguage();
+
+  const resolvedDomain = useMemo(() => {
+    const d = viewDomain?.websiteName || currentDomain?.websiteName || domainNameParam || "";
+    try {
+      return typeof d === "string" ? decodeURIComponent(d) : d;
+    } catch {
+      return d;
+    }
+  }, [viewDomain?.websiteName, currentDomain?.websiteName, domainNameParam]);
 
   const [dnsRecords, setDnsRecords] = useState([]);
   const [isLoadingDns, setIsLoadingDns] = useState(false);
   const [isUpdatingAutoRenew, setIsUpdatingAutoRenew] = useState(false);
   const [localAutoRenew, setLocalAutoRenew] = useState(null);
 
-  console.log("DNS :", dnsRecords);
-
   const normalizedAutoRenew = useMemo(() => {
 
     if (localAutoRenew !== null) {
       return localAutoRenew;
-    }
+    }               
 
     const value =
       viewDomain?.autorenew ??
@@ -239,10 +247,6 @@ const EssentialsCard = ({ viewDomain, contactInfo, currentDomain, onRefreshDomai
       setIsLoadingDns(false);
     }
   }, [viewDomain?.websiteName, showAlert, t]);
-
-  useEffect(() => {
-    setDnsRecords(viewDomain?.nameServers || []);
-  }, [viewDomain?.nameServers]);
 
   useEffect(() => {
     fetchDNSRecords();
@@ -481,16 +485,28 @@ const EssentialsCard = ({ viewDomain, contactInfo, currentDomain, onRefreshDomai
           </div>
         ) : dnsRecords.length > 0 ? (
           <div className="py-7 px-5 space-y-4 card-essential">
-            {dnsRecords.map((record) => (
-              <div
-                className="flex items-center gap-2 info-detail"
-                key={record?.id || record?.seq_nr || record?.name}
-              >
-                <span className="text-primary dark:text-white">
-                  {record?.name}
-                </span>
-              </div>
-            ))}
+            {dnsRecords.map((record, idx) => {
+              const recordType = record?.type || "—";
+              const recordName = record?.name ?? "";
+              const recordValue = record?.value ?? record?.content ?? record?.target ?? "";
+              const priority = record?.type === "MX" && record?.priority != null ? ` (pri ${record.priority})` : "";
+              const valueDisplay = recordValue ? (String(recordValue).length > 35 ? `${String(recordValue).slice(0, 32)}…` : recordValue) : "";
+              const domain = resolvedDomain?.toLowerCase?.() || "";
+              const rn = String(recordName).toLowerCase();
+              const isRootRecord = !recordName || rn === domain || rn === `@.${domain}` || recordName === "@" || rn.endsWith(`.${domain}`);
+              const displayName = isRootRecord ? "@" : recordName;
+              const text = valueDisplay ? `${recordType} · ${displayName} · ${valueDisplay}${priority}` : `${recordType} · ${displayName}${priority}`;
+              return (
+                <div
+                  className="flex items-center gap-2 info-detail"
+                  key={record?.id || record?.seq_nr || `${recordType}-${idx}`}
+                >
+                  <span className="text-primary dark:text-white">
+                    {text}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         ) : (
           <div className="py-7 px-5">

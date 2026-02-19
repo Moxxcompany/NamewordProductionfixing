@@ -2,19 +2,22 @@ import { IoClose, IoChevronDown } from "react-icons/io5";
 import { RiGlobalLine } from "react-icons/ri";
 import { TbArrowRight } from "react-icons/tb";
 import { FiInfo } from "react-icons/fi";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import PropTypes from "prop-types";
-import { NavLink, useNavigate } from "react-router";
+import { NavLink } from "react-router";
+import axios from "axios";
 import { domainAPI } from "../../api/domains";
+import taxAPI from "../../api/taxApi";
+import { validatePromoCode } from "../../utils/promocode";
+import { useAuth } from "../../hooks/useAuth";
 import { useAlert } from "../../context/AlertContext";
 import Loader from "../common/Loader";
-import { cartAPI } from "../../api/cartApi";
 import { IoIosArrowDown } from "react-icons/io";
 import { MdCheck } from "react-icons/md";
 import { useLanguage } from "../../hooks/useLanguage";
 
 const TERMS = [1, 2, 3];
-const VAT_RATE = 0.2;
+const DEFAULT_TAX_RATE = 0.2;
 
 const formatCurrency = (value) =>
   typeof value === "number" && !Number.isNaN(value)
@@ -44,6 +47,7 @@ const RegisterDomainModal = ({
   pricingProvider = "hostbay",
 }) => {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [selectedTerm, setSelectedTerm] = useState(TERMS[0]);
   const [options, setOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -51,10 +55,82 @@ const RegisterDomainModal = ({
   const [showPromocode, setShowPromocode] = useState(false);
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const { showAlert } = useAlert();
-  const navigate = useNavigate();
+
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedPromoCode, setAppliedPromoCode] = useState(null);
+  const [promoDiscount, setPromoDiscount] = useState(0);
+  const [validatingPromo, setValidatingPromo] = useState(false);
 
   const [VTXId, setVTXId] = useState("");
   const [VTATax, setVTATax] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [taxRate, setTaxRate] = useState(DEFAULT_TAX_RATE);
+  const [taxType, setTaxType] = useState("VAT");
+  const [vatValidated, setVatValidated] = useState(false);
+  const [vatValidating, setVatValidating] = useState(false);
+  const [taxRateLoading, setTaxRateLoading] = useState(false);
+  const [countryDetecting, setCountryDetecting] = useState(true);
+  const [countries, setCountries] = useState([{ code: "", name: "" }]);
+  const [countriesLoading, setCountriesLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        setCountriesLoading(true);
+        const response = await axios.get("https://restcountries.com/v3.1/all?fields=name,cca2");
+        if (response.data && Array.isArray(response.data)) {
+          const countriesList = response.data
+            .map((c) => ({ code: c.cca2, name: c.name?.common || c.name?.official }))
+            .sort((a, b) => a.name.localeCompare(b.name));
+          setCountries([{ code: "", name: t.admin.selectCountry || "Select country" }, ...countriesList]);
+        }
+      } catch (err) {
+        setCountries([{ code: "", name: t.admin.selectCountry || "Select country" }]);
+      } finally {
+        setCountriesLoading(false);
+      }
+    };
+    fetchCountries();
+  }, [t.admin.selectCountry]);
+
+  useEffect(() => {
+    const detectUserCountry = async () => {
+      setCountryDetecting(true);
+      try {
+        const response = await taxAPI.getUserCountry();
+        if (response?.success && response?.responseData?.country) {
+          setSelectedCountry(response.responseData.country);
+          const rate = response.responseData.taxRate;
+          setTaxRate(rate ?? (response.responseData.country === "IN" ? 0.18 : DEFAULT_TAX_RATE));
+          setTaxType(response.responseData.taxType || "VAT");
+        }
+      } catch (err) {
+        // Keep default
+      } finally {
+        setCountryDetecting(false);
+      }
+    };
+    detectUserCountry();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedCountry || countryDetecting) return;
+    const fetchTaxRate = async () => {
+      setTaxRateLoading(true);
+      try {
+        const response = await taxAPI.getTaxRate(selectedCountry);
+        const newRate = response?.responseData?.taxRate;
+        const newType = response?.responseData?.taxType || "VAT";
+        setTaxRate(vatValidated ? 0 : (newRate ?? (selectedCountry === "IN" ? 0.18 : DEFAULT_TAX_RATE)));
+        setTaxType(newType);
+      } catch (err) {
+        setTaxRate(vatValidated ? 0 : (selectedCountry === "IN" ? 0.18 : DEFAULT_TAX_RATE));
+      } finally {
+        setTaxRateLoading(false);
+      }
+    };
+    fetchTaxRate();
+  }, [selectedCountry, countryDetecting, vatValidated]);
 
   useEffect(() => {
     if (!domainName) {
@@ -155,13 +231,90 @@ const RegisterDomainModal = ({
   );
 
   const subtotal = selectedOption?.totalPrice || 0;
-  const vatAmount = subtotal * VAT_RATE;
-  const total = subtotal + vatAmount;
+  const subtotalAfterPromo = Math.max(0, subtotal - promoDiscount);
+  const effectiveTaxRate = vatValidated ? 0 : taxRate;
+  const vatAmount = Number((subtotalAfterPromo * effectiveTaxRate).toFixed(2));
+  const total = Number((subtotalAfterPromo + vatAmount).toFixed(2));
 
   const expirationDate = useMemo(() => {
     const date = addYears(selectedTerm);
     return date || "—";
   }, [selectedTerm]);
+
+  const handleVatIdChange = useCallback(
+    async (vatId) => {
+      setVTXId(vatId);
+      if (!vatId) {
+        setVatValidated(false);
+        return;
+      }
+      if (!selectedCountry) {
+        showAlert(t.payment?.pleaseSelectCountryFirst || "Please select a country first", { duration: 3000, type: "fail" });
+        return;
+      }
+      if (vatId.length >= 6) {
+        setVatValidating(true);
+        try {
+          const response = await taxAPI.validateVatId(selectedCountry, vatId);
+          if (response?.success && response?.responseData?.isValid) {
+            setVatValidated(true);
+            setTaxRate(0);
+            showAlert(t.admin?.vatNumberVerified || "VAT number verified", { duration: 3000, type: "success" });
+          } else {
+            setVatValidated(false);
+            showAlert(t.payment?.taxIdValidationFailed || "Invalid tax ID", { duration: 3000, type: "fail" });
+          }
+        } catch (err) {
+          setVatValidated(false);
+          showAlert(t.payment?.failedToValidateTaxId || "Failed to validate tax ID", { duration: 3000, type: "fail" });
+        } finally {
+          setVatValidating(false);
+        }
+      } else {
+        setVatValidated(false);
+      }
+    },
+    [selectedCountry, showAlert, t]
+  );
+
+  const handleApplyPromoCode = useCallback(async () => {
+    if (!promoCode.trim()) {
+      showAlert(t.cart?.orderSummary?.pleaseEnterPromocode || "Please enter a promocode", { duration: 3000, type: "fail" });
+      return;
+    }
+    setValidatingPromo(true);
+    try {
+      const validation = user ? await validatePromoCode(promoCode, true) : await validatePromoCode(promoCode, false);
+      if (!validation.valid) {
+        const msg = validation.alreadyUsed ? (t.cart?.orderSummary?.promocodeAlreadyUsed || "Already used") : (validation.error || "Invalid promocode");
+        showAlert(msg, { duration: 3000, type: "fail" });
+        return;
+      }
+      setAppliedPromoCode(validation.code);
+      setPromoDiscount(validation.discount);
+      showAlert(
+        (t.cart?.orderSummary?.promocodeAppliedSuccess || "Promocode applied! -${amount}")
+          .replace("{code}", validation.code)
+          .replace("{amount}", validation.discount.toFixed(2)),
+        { duration: 3000, type: "success" }
+      );
+    } catch (err) {
+      showAlert(err?.message || t.cart?.orderSummary?.failedToValidatePromocode || "Failed to validate promocode", { duration: 3000, type: "fail" });
+    } finally {
+      setValidatingPromo(false);
+    }
+  }, [promoCode, user, showAlert, t]);
+
+  const handleRemovePromoCode = useCallback(() => {
+    setAppliedPromoCode(null);
+    setPromoDiscount(0);
+    setPromoCode("");
+  }, []);
+
+  const getTaxLabel = () => {
+    if (vatValidated) return `${taxType} (0%)`;
+    return `${taxType} (${(taxRate * 100).toFixed(1)}%)`;
+  };
 
   const handleCheckout = async () => {
     if (isCheckoutLoading) return;
@@ -184,47 +337,64 @@ const RegisterDomainModal = ({
 
     setIsCheckoutLoading(true);
     try {
-      // Add domain to cart with selected term
-      const apiData = {
-        itemType: "domain",
+      const provider = pricingProvider === "hostbay" ? "openprovider" : pricingProvider;
+      let ns1 = "ns1.nameword.com";
+      let ns2 = "ns2.dns-parking.com";
+      if (provider === "openprovider") {
+        ns1 = "ns1.openprovider.nl";
+        ns2 = "ns2.openprovider.be";
+      } else if (provider === "cloudflare") {
+        ns1 = "sara.ns.cloudflare.com";
+        ns2 = "jack.ns.cloudflare.com";
+      }
+
+      const domainData = {
+        productType: 1,
         websiteName: domainName,
-        action: "register",
-        availability: true,
-        years: selectedOption.term,
-        provider: pricingProvider,
-        price: {
-          amount: selectedOption.totalPrice,
-          originalAmount: selectedOption.originalPrice,
-          currency: "USD",
-        },
-        renew: {
-          amount: selectedOption.renewalfee,
-          currency: "USD",
-        },
+        duration: selectedOption.term,
+        isWhoisProtection: false,
+        ns1,
+        ns2,
+        ns3: null,
+        ns4: null,
+        provider,
+        handle: "default",
       };
 
-      const result = await cartAPI.addToCart(apiData);
+      const response = await domainAPI.getDomainDynoCheckoutUrl({
+        amount: total,
+        domainData,
+        walletAmount: 0,
+        rewardPointsUsed: 0,
+        rewardDiscount: 0,
+      });
 
-      if (result?.success === true) {
-        showAlert(t.domain.domainAddedSuccess, {
-          duration: 2000,
+      const redirectUrl =
+        response?.redirect_url ||
+        response?.data?.redirect_url ||
+        response?.checkoutUrl ||
+        response?.data?.checkoutUrl;
+
+      if (response?.success && redirectUrl) {
+        showAlert(t.admin.redirectingToDynoPay || "Redirecting to payment...", {
+          duration: 1500,
           type: "success",
         });
-
-        // Close modal and navigate to cart/checkout
-        onClose();
-        setTimeout(() => {
-          navigate("/payment-checkout");
-        }, 500);
-      } else {
-        throw new Error(result?.message || t.admin.failedToAddDomainToCart || "Failed to add domain to cart");
+        window.location.assign(redirectUrl);
+        return;
       }
+
+      const backendMsg = normalizeErrorMessage(
+        response?.message || response?.error?.message,
+        t.admin.failedToStartDomainCheckout || "Failed to start checkout."
+      );
+      showAlert(backendMsg, { duration: 3000, type: "fail" });
     } catch (error) {
       const errorMsg = normalizeErrorMessage(
         error?.response?.data?.message ||
         error?.response?.data?.error ||
         error?.message,
-        t.admin.failedToAddDomainToCart || "Failed to add domain to cart."
+        t.admin.failedToStartDomainCheckout || "Failed to start checkout."
       );
       showAlert(errorMsg, { duration: 3000, type: "fail" });
     } finally {
@@ -341,9 +511,20 @@ const RegisterDomainModal = ({
                   <p>{t.cart.orderSummary.subtotal}</p>
                   <span>{formatCurrency(subtotal)}</span>
                 </div>
+                {promoDiscount > 0 && (
+                  <div className="flex justify-between items-center mb-1.5 text-13 text-primary dark:text-gray-500 font-medium">
+                    <p className="flex gap-1 items-center">
+                      {t.cart?.orderSummary?.promocodeLabel?.replace("{code}", appliedPromoCode) || `Promocode (${appliedPromoCode})`} <FiInfo />
+                    </p>
+                    <span>-{formatCurrency(promoDiscount)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center mb-1.5 text-13 text-primary dark:text-gray-500 font-medium">
                   <p className="flex gap-1 items-center">
-                    {t.admin.vat20Percent} <FiInfo />
+                    {getTaxLabel()} <FiInfo />
+                    {countryDetecting && (
+                      <span className="text-xs text-gray-400 ml-1">({t.payment?.detecting || "Detecting..."})</span>
+                    )}
                   </p>
                   <span>{formatCurrency(vatAmount)}</span>
                 </div>
@@ -364,54 +545,71 @@ const RegisterDomainModal = ({
                   {VTATax && (
                     <>
                       <div className="w-full sm:w-4/5 flex sm:flex-row flex-col gap-2">
-
                         <div className="relative w-full sm:w-56">
                           <select
-                            className={`input-field admin-form peer`}
+                            className={`input-field admin-form peer ${taxRateLoading || countriesLoading ? "opacity-60" : ""}`}
                             id="country"
                             name="selectedCountryCode"
+                            value={selectedCountry}
+                            onChange={(e) => {
+                              setSelectedCountry(e.target.value);
+                              setVTXId("");
+                              setVatValidated(false);
+                            }}
+                            disabled={taxRateLoading || countriesLoading}
                           >
-                            <option value="">{t.admin.selectCountry}</option>
+                            {countriesLoading ? (
+                              <option value="">{t.payment?.loadingCountries || "Loading..."}</option>
+                            ) : (
+                              countries.map((c) => (
+                                <option key={c.code} value={c.code}>
+                                  {c.name}
+                                </option>
+                              ))
+                            )}
                           </select>
                           <IoIosArrowDown size={15} className="absolute top-1/2 transform -translate-y-1/2 right-4 text-primary dark:text-white pointer-events-none" />
-
-                          {/* <label htmlFor="country" className={`absolute left-5 top-2 text-xs font-medium pointer-events-none transition-all dark:text-gray-500 ${values.country ? 'text-gray-600' : 'text-secondary'}`}> */}
-
-                          <label htmlFor="country" className={`absolute left-5 top-2 text-xs font-medium pointer-events-none transition-all dark:text-gray-500 text-secondary`}>
+                          <label htmlFor="country" className="absolute left-5 top-2 text-xs font-medium pointer-events-none transition-all dark:text-gray-500 text-secondary">
                             {t.admin.country}
                           </label>
-
-                          {/* <ErrorMessage name="country" component="p" className="text-warning pl-5 text-xs font-medium mt-1" /> */}
                         </div>
-
                         <div className="relative w-full">
                           <input
                             type="text"
-                            className="input-field admin-form peer w-full"
+                            className={`input-field admin-form peer w-full ${vatValidating ? "opacity-60" : ""} ${vatValidated ? "border-green-500" : ""}`}
                             id="vatTaxId"
                             value={VTXId}
-                            onChange={(e) => setVTXId(e.target.value)}
+                            onChange={(e) => handleVatIdChange(e.target.value)}
+                            disabled={vatValidating || !selectedCountry}
                           />
                           <label
                             htmlFor="vatTaxId"
-                            className={`absolute left-5 transition-all font-medium ${VTXId
-                              ? "top-2 text-xs text-gray-600"
-                              : "top-4 text-13 text-primary dark:text-gray-500 "
-                              } peer-focus:top-2 peer-focus:text-xs peer-focus:text-gray-600 peer-placeholder-shown:text-secondary`}
+                            className={`absolute left-5 transition-all font-medium ${VTXId ? "top-2 text-xs text-gray-600" : "top-4 text-13 text-primary dark:text-gray-500 "} peer-focus:top-2 peer-focus:text-xs peer-focus:text-gray-600 peer-placeholder-shown:text-secondary`}
                           >
                             {t.admin.vatTaxIdPlaceholder || "PT87838273"}
                           </label>
+                          {vatValidating && (
+                            <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-tealdark" />
+                            </div>
+                          )}
                         </div>
                       </div>
-
-
-                      <div className="w-full py-2 px-3 bg-white dark:bg-gray-900 text-sucess-400 text-xs font-medium rounded-md flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-1">
-                          <MdCheck className='w-4 h-4 flex-none' />
-                          <p>{t.admin.vatNumberVerified}</p>
+                      {vatValidated && VTXId && (
+                        <div className="w-full py-2 px-3 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-xs font-medium rounded-md flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1">
+                            <MdCheck className="w-4 h-4 flex-none" />
+                            <p>{t.admin.vatNumberVerified}</p>
+                          </div>
+                          <IoClose
+                            className="cursor-pointer w-4 h-4 text-primary dark:text-white hover:text-red-500"
+                            onClick={() => {
+                              setVTXId("");
+                              setVatValidated(false);
+                            }}
+                          />
                         </div>
-                        <IoClose className="cursor-pointer w-4 h-4 text-primary dark:text-white" />
-                      </div>
+                      )}
                     </>
                   )}
                 </div>
@@ -441,9 +639,43 @@ const RegisterDomainModal = ({
                 </button>
 
                 {showPromocode && (
-                  <p className="text-13 text-secondary italic px-1">
-                    {t.admin.promoCodeAvailableSoon || "Promo codes will be available soon."}
-                  </p>
+                  <>
+                    {!appliedPromoCode ? (
+                      <div className="w-full flex sm:flex-row flex-col justify-center items-center gap-2 promocode">
+                        <div className="relative w-full">
+                          <input
+                            type="text"
+                            className="input-field peer w-full"
+                            id="promoCode"
+                            value={promoCode}
+                            onChange={(e) => setPromoCode(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleApplyPromoCode())}
+                          />
+                          <label
+                            htmlFor="promoCode"
+                            className={`absolute left-5 transition-all font-medium ${promoCode ? "top-2 text-xs text-gray-600" : "top-4 text-13 text-primary dark:text-gray-500 "} peer-focus:top-2 peer-focus:text-xs peer-focus:text-gray-600 peer-placeholder-shown:text-secondary`}
+                          >
+                            {t.cart?.orderSummary?.promocodePlaceholder || "Enter promocode"}
+                          </label>
+                        </div>
+                        <button
+                          onClick={handleApplyPromoCode}
+                          disabled={validatingPromo}
+                          className={`add-to-cart sm:w-auto w-full ${validatingPromo ? "opacity-60 cursor-not-allowed" : ""}`}
+                        >
+                          {validatingPromo ? (t.cart?.orderSummary?.validating || "Validating...") : (t.cart?.orderSummary?.apply || "Apply")}
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="w-full flex justify-center items-center gap-2 promocode">
+                        <div className="promocode-added">
+                          <MdCheck className="w-5 h-5 flex-none" />
+                          <p>{t.cart?.orderSummary?.promocodeApplied?.replace("{code}", appliedPromoCode) || `Promocode ${appliedPromoCode} applied`}</p>
+                          <IoClose className="cursor-pointer w-4 h-4 text-primary dark:text-white hover:text-red-500 ml-2" onClick={handleRemovePromoCode} />
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
 
                 <div className="flex justify-start my-2">

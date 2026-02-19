@@ -10,12 +10,12 @@ export const useUserSession = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const { showAlert: showAlertFunc } = useAlert()
-  const { clearstorage } = useAuth();
+  const { clearstorage } =  useAuth();
 
   const getUserSessions = useCallback(async () => {
     setLoading(true);
     setError(null);
-
+    
     try {
       const result = await userSessionsAPI.getUserSessions();
       setUserSessions(result?.sessions);
@@ -33,13 +33,13 @@ export const useUserSession = () => {
   const logoutUserSession = useCallback(async (sessionId, isCurrent) => {
     setLoading(true);
     setError(null);
-
+    
     try {
       const result = await userSessionsAPI.singleLogout(sessionId);
       setAlertMessage(result?.message);
       setShowAlert(true);
       setUserSessions((prev) => prev.filter((p) => (p.id || p._id) !== sessionId));
-      if (isCurrent) {
+      if (isCurrent){
         clearstorage();
       }
       showAlertFunc(result.message, {
@@ -67,7 +67,7 @@ export const useUserSession = () => {
       showAlertFunc(result.message, {
         type: "success",
       });
-      if (onClose) {
+      if (onClose){
         onClose();
       }
       return result;

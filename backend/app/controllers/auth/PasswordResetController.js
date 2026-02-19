@@ -49,7 +49,7 @@ class PasswordResetController {
 	async resetPassword(req, res) {
 
 		const { email, token, password } = req.body;
-		let result = await PasswordResetToken.findOne({ email, token });
+		let result = await PasswordResetToken.findOne({ token });
 
 		if (result) {
 			let newDate = moment(result.createdAt).add(60, 'minutes');

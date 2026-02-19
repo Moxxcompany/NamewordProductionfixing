@@ -55,7 +55,7 @@ const MonthlyPlan = ({ plans = [], onSelectPlan }) => {
                 <p className="plan-title capitalize">
                   {plan.provider || t.cart.hosting.hostingFallback}
                 </p>
-                <span className="badge">{plan.billing_cycle}</span>
+                <span className="badge dark:text-gray-200">{plan.billing_cycle}</span>
               </div>
               <p className="plan-heading">{plan.plan_name || plan.name}</p>
 

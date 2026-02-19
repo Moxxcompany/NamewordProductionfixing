@@ -4170,8 +4170,14 @@ class DomainController {
 				}
 			}
 
-			// Prefer payment_link (DynoPay checkout page); redirect_url in response is often our webhook URL
-			const redirectUrl = dynoResponse?.data?.data?.payment_link || dynoResponse?.data?.data?.redirect_url || null;
+			const payload = dynoResponse?.data?.data || dynoResponse?.data || dynoResponse;
+			const redirectUrl =
+				payload?.payment_url ||
+				payload?.payment_link ||
+				payload?.redirect_url ||
+				payload?.url ||
+				payload?.checkout_url ||
+				null;
 			return res.status(200).json({
 				success: true,
 				message: "DynoPay redirect URL generated successfully.",
@@ -4485,6 +4491,13 @@ class DomainController {
 				provider,
 				duration = 1,
 				isWhoisProtection = false,
+				amount: frontendAmount,
+				promoCode,
+				promoDiscount = 0,
+				taxRate,
+				vatValidated,
+				countryCode,
+				vatId,
 			} = req.body || {};
 
 			const userId = req.user.id;
@@ -4541,8 +4554,18 @@ class DomainController {
 				});
 			}
 
-			const vatAmount = Number((baseAmount * VAT_RATE).toFixed(2));
-			const amount = Number((baseAmount + vatAmount).toFixed(2));
+			let amount;
+			let vatAmount;
+			const parsedFrontendAmount = Number.parseFloat(frontendAmount);
+			if (parsedFrontendAmount > 0 && Number.isFinite(parsedFrontendAmount)) {
+				amount = Number(parsedFrontendAmount.toFixed(2));
+				const promoVal = Number(promoDiscount || 0);
+				vatAmount = Number((amount - Math.max(0, baseAmount - promoVal)).toFixed(2));
+				if (vatAmount < 0 || !Number.isFinite(vatAmount)) vatAmount = 0;
+			} else {
+				vatAmount = Number((baseAmount * VAT_RATE).toFixed(2));
+				amount = Number((baseAmount + vatAmount).toFixed(2));
+			}
 
 			const reference = `domain_renew_dynocheckout_${Date.now()}`;
 			const frontendRedirectUrl = `${process.env.FRONTEND_URL || "http://localhost:5173"}/domains`;
@@ -4561,6 +4584,12 @@ class DomainController {
 				baseAmount,
 				vatAmount,
 				duration: durationValue,
+				promoCode: promoCode || null,
+				promoDiscount: Number(promoDiscount || 0),
+				taxRate,
+				vatValidated,
+				countryCode: countryCode || null,
+				vatId: vatId || null,
 				domainData: {
 					websiteName: context.websiteName,
 					domainNameId: context.domainNameId || null,
@@ -4599,10 +4628,13 @@ class DomainController {
 				}
 			}
 
+			const payload = dynoResponse?.data?.data || dynoResponse?.data || dynoResponse;
 			const redirectUrl =
-				dynoResponse?.data?.data?.redirect_url ||
-				dynoResponse?.data?.data?.payment_link ||
-				dynoResponse?.data?.redirect_url ||
+				payload?.payment_url ||
+				payload?.payment_link ||
+				payload?.redirect_url ||
+				payload?.url ||
+				payload?.checkout_url ||
 				null;
 
 			if (!redirectUrl) {
@@ -6052,9 +6084,10 @@ class DomainController {
 				}
 			}
 
+			// Prefer payment_link (DynoPay checkout page); redirect_url in response is often our post-payment URL (/domains)
 			const redirectUrl =
-				dynoResponse?.data?.data?.redirect_url ||
 				dynoResponse?.data?.data?.payment_link ||
+				dynoResponse?.data?.data?.redirect_url ||
 				dynoResponse?.data?.redirect_url ||
 				null;
 

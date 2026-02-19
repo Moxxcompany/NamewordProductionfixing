@@ -18,7 +18,7 @@ import { useLanguage } from "../../../hooks/useLanguage";
 const ContactInfo = () => {
     const { currentDomain: domainFromLocation = {} } = useCustomLocation();
     const { domains } = useDomain();
-    const currentDomain = domainFromLocation.websiteName
+    const currentDomain = domainFromLocation?.websiteName
         ? domainFromLocation
         : domains?.[0];
     const { t } = useLanguage();
