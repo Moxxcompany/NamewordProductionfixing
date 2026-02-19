@@ -40,9 +40,8 @@ User requested setup of the Nameword platform (domain/hosting management) on the
 - 1 Admin (SSH-Admin)
 
 ## Important Notes
-- The Railway MongoDB (DB_URI provided by user) is not accessible from this pod. Local MongoDB is used instead. User data from Railway would need to be exported/imported if needed.
-- Google OAuth won't work until the redirect URLs are updated in Google Cloud Console to use the pod URL.
-- NODE_ENV is set to "production" but .env is loaded via start.sh wrapper script.
+- **DB_URI**: Connected to Railway MongoDB as provided.
+- **Google OAuth**: Redirect URLs in `.env` point to the pod URL for correct redirects. Google Cloud Console still needs updating to whitelist the new redirect URLs.
 
 ## Backlog / Next Steps
 - P0: Import user data from Railway MongoDB if needed
