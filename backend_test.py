@@ -27,7 +27,10 @@ class NamewordAPITester:
     def run_test(self, name, method, endpoint, expected_status, data=None, headers=None):
         """Run a single API test"""
         url = f"{self.base_url}/api/v1{endpoint}"
-        test_headers = {'Content-Type': 'application/json'}
+        test_headers = {
+            'Content-Type': 'application/json',
+            'X-API-KEY': self.api_key
+        }
         if headers:
             test_headers.update(headers)
         if self.token:
