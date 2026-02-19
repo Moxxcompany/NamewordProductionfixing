@@ -56,4 +56,7 @@ loyalty-reward .md
 .yarn
 
 backend/.pnp.cjs
-backend/.pnp.loader.mjs
+backend/.pnp.loader.mjs-e 
+# Environment files
+*.env
+*.env.*
