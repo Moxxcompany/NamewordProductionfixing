@@ -10,6 +10,8 @@ class NamewordAPITester:
         self.tests_run = 0
         self.tests_passed = 0
         self.test_results = []
+        # API key from frontend env or default
+        self.api_key = "YOUR_API_KEY_HERE"
 
     def log_test(self, name, success, status_code, response_data, error=None):
         """Log test result"""
