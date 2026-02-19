@@ -1,0 +1,40 @@
+[
+  {
+    "test_name": "User Registration",
+    "success": false,
+    "status_code": 422,
+    "response_data": {
+      "errors": [
+        {
+          "message": "Mobile already in use",
+          "field": "mobile"
+        }
+      ]
+    },
+    "error": null
+  },
+  {
+    "test_name": "User Login",
+    "success": false,
+    "status_code": 400,
+    "response_data": {
+      "errors": [
+        {
+          "message": "Invalid credentials."
+        }
+      ]
+    },
+    "error": null
+  },
+  {
+    "test_name": "Domain Search",
+    "success": false,
+    "status_code": 400,
+    "response_data": {
+      "success": false,
+      "message": "No API key provided. Please create an API key first and try again.",
+      "redirect": true
+    },
+    "error": null
+  }
+]
