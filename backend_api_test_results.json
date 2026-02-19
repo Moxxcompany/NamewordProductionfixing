@@ -1,28 +1,138 @@
 [
   {
     "test_name": "User Registration",
-    "success": false,
-    "status_code": 422,
+    "success": true,
+    "status_code": 201,
     "response_data": {
-      "errors": [
-        {
-          "message": "Mobile already in use",
-          "field": "mobile"
-        }
-      ]
+      "data": {
+        "name": "Test Browser User",
+        "email": "testbrowser211441@example.com",
+        "username": "testbrowser211441",
+        "mobile": "92114411234",
+        "banned": false,
+        "deactivated": false,
+        "locked": false,
+        "failedLoginAttempts": 0,
+        "lockedUntil": null,
+        "isProfileVerified": false,
+        "notifySMS": true,
+        "notifyEmail": false,
+        "notificationPreferences": {
+          "subscriptionsAndPayments": {
+            "sms": false,
+            "whatsapp": false,
+            "email": true
+          },
+          "accountAndSecurity": {
+            "sms": false,
+            "whatsapp": true,
+            "email": true
+          },
+          "serviceStatusAndChanges": {
+            "sms": false,
+            "whatsapp": true,
+            "email": true
+          },
+          "productUpdatesAndOffers": {
+            "sms": true,
+            "whatsapp": true,
+            "email": true
+          }
+        },
+        "enabled2FA": false,
+        "walletId": null,
+        "walletToken": null,
+        "domainProviderClient": {
+          "openprovider": {
+            "status": "pending"
+          },
+          "connectreseller": {
+            "status": "pending"
+          },
+          "hostbay": {
+            "status": "pending"
+          }
+        },
+        "cpanelAccounts": [],
+        "pleskAccounts": [],
+        "badges": [],
+        "usedPromoCodes": [],
+        "createdAt": "2026-02-19T21:14:41.193Z",
+        "updatedAt": "2026-02-19T21:14:41.193Z",
+        "id": "69977d410f180c3d78391139"
+      },
+      "message": "OTP sent successfully.",
+      "success": true,
+      "expiresAt": "2026-02-19T21:24:41.481Z"
     },
     "error": null
   },
   {
     "test_name": "User Login",
-    "success": false,
-    "status_code": 400,
+    "success": true,
+    "status_code": 200,
     "response_data": {
-      "errors": [
-        {
-          "message": "Invalid credentials."
-        }
-      ]
+      "data": {
+        "notificationPreferences": {
+          "subscriptionsAndPayments": {
+            "sms": false,
+            "whatsapp": false,
+            "email": true
+          },
+          "accountAndSecurity": {
+            "sms": false,
+            "whatsapp": true,
+            "email": true
+          },
+          "serviceStatusAndChanges": {
+            "sms": false,
+            "whatsapp": true,
+            "email": true
+          },
+          "productUpdatesAndOffers": {
+            "sms": true,
+            "whatsapp": true,
+            "email": true
+          }
+        },
+        "domainProviderClient": {
+          "openprovider": {
+            "status": "pending"
+          },
+          "connectreseller": {
+            "status": "pending"
+          },
+          "hostbay": {
+            "status": "pending"
+          }
+        },
+        "name": "Test Browser User",
+        "email": "testbrowser211441@example.com",
+        "username": "testbrowser211441",
+        "mobile": "92114411234",
+        "banned": false,
+        "deactivated": false,
+        "locked": false,
+        "failedLoginAttempts": 0,
+        "lockedUntil": null,
+        "isProfileVerified": false,
+        "notifySMS": true,
+        "notifyEmail": false,
+        "enabled2FA": false,
+        "walletId": null,
+        "walletToken": null,
+        "cpanelAccounts": [],
+        "pleskAccounts": [],
+        "badges": [],
+        "usedPromoCodes": [],
+        "createdAt": "2026-02-19T21:14:41.193Z",
+        "updatedAt": "2026-02-19T21:14:41.260Z",
+        "membershipTier": "699779dac3a4b087784638b0",
+        "id": "69977d410f180c3d78391139"
+      },
+      "message": "OTP sent successfully.",
+      "success": true,
+      "expiresAt": "2026-02-19T21:24:42.194Z"
     },
     "error": null
   },
@@ -32,7 +142,7 @@
     "status_code": 400,
     "response_data": {
       "success": false,
-      "message": "No API key provided. Please create an API key first and try again.",
+      "message": "Invalid API key format. Please create an API key first and try again.",
       "redirect": true
     },
     "error": null
