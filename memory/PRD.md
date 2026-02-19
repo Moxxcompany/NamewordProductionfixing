@@ -39,9 +39,14 @@ User requested setup of the Nameword platform (domain/hosting management) on the
 - 4 Membership Tiers
 - 1 Admin (SSH-Admin)
 
-## Important Notes
-- **DB_URI**: Connected to Railway MongoDB as provided.
-- **Google OAuth**: Redirect URLs in `.env` point to the pod URL for correct redirects. Google Cloud Console still needs updating to whitelist the new redirect URLs.
+## Testing Results (Feb 19, 2026)
+### Iteration 2 - Onboarding Flow
+- **Registration**: Working - form submits, user created, OTP sent
+- **Login**: Working - accepts credentials, triggers OTP verification
+- **Homepage**: Loads correctly with hero, nav, search bar
+- **Navigation**: All pages (Services, Pricing, Contact, FAQ) accessible
+- **Domain Search**: Requires authentication/API key (expected behavior)
+- **DB**: Using local MongoDB (Railway internal DNS not resolvable from this pod)
 
 ## Backlog / Next Steps
 - P0: Import user data from Railway MongoDB if needed
