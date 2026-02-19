@@ -68,9 +68,9 @@ const ResetPassword = () => {
               passwordConfirmation: "",
             }}
             validationSchema={Yup.object().shape({
-              email: Yup.string()
-                .email(t.auth.invalidEmailAddress || 'Please enter a valid email address')
-                .required(t.auth.emailRequired || 'Email is required'),
+              // email: Yup.string()
+              //   .email(t.auth.invalidEmailAddress || 'Please enter a valid email address')
+              //   .required(t.auth.emailRequired || 'Email is required'),
               token: Yup.string()
                 .required(t.auth.resetTokenRequired || 'Reset token is required'),
               password: Yup.string()

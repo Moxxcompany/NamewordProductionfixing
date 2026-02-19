@@ -19,7 +19,7 @@ const Concerns = ({ logoutAllUserSessions, data }) => {
             </div>
 
             <div className="flex gap-2 justify-start flex-wrap">
-                {data?.length > 0 && <button className="btn-outline small" onClick={() => setIsOpen(true)}>{t.admin.logoutFromAllDevices}</button>}
+                {data?.length > 1 && <button className="btn-outline small" onClick={() => setIsOpen(true)}>{t.admin.logoutFromAllDevices}</button>}
                 {user?.hasPassword && <button type="button" className="btn-outline small" onClick={() => setIsPasswordOpen(true)}>{t.admin.changePassword}</button>}
             </div>
 

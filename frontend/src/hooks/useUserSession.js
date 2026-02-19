@@ -63,7 +63,7 @@ export const useUserSession = () => {
       const result = await userSessionsAPI.logoutAll();
       setAlertMessage(result?.message);
       setShowAlert(true);
-      setUserSessions((prev) => prev.filter((p) => p._id === result.sessionId));
+      setUserSessions((prev) => prev.filter((p) => (p._id || p.id) === result.sessionId));
       showAlertFunc(result.message, {
         type: "success",
       });

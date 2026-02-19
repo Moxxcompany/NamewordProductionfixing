@@ -22,7 +22,7 @@ class PasswordResetController {
 		await PasswordResetToken.create({
 			email, token
 		});
-		let resetLink = env.FRONTEND_URL + "/password-reset/" + token + "?email=" + user.email;
+		let resetLink = env.FRONTEND_URL + "/password-reset/" + token;
 		
 		// Check if user has email notifications enabled for account and security
 		const { shouldSendEmail } = require("../../utils/notificationHelper");

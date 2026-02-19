@@ -84,8 +84,8 @@ module.exports.verifyEmailRules = [
 ];
 
 module.exports.passwordResetRules = [
-    body('email').trim().notEmpty().withMessage((_, { path }) => `The ${path} field is required.`)
-        .isEmail().withMessage("The email field must be a valid email address."),
+    // body('email').trim().notEmpty().withMessage((_, { path }) => `The ${path} field is required.`)
+    //     .isEmail().withMessage("The email field must be a valid email address."),
     body('password').trim().notEmpty().withMessage((_, { path }) => `The ${path} field is required.`)
         .isLength({ min: 8, max: 20 }).withMessage("Password should be between 8-20 chars"),
     body('passwordConfirmation').trim().notEmpty().withMessage((_, { path }) => `The ${path} field is required.`)
